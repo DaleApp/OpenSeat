@@ -1,18 +1,10 @@
 import { Ride } from "@/types";
-import { formatTimeRange } from "@/lib/formatters";
+import { formatTimeRange, VIBE_LABELS } from "@/lib/formatters";
 import Avatar from "@/components/ui/Avatar";
 import Tag from "@/components/ui/Tag";
 import Card from "@/components/ui/Card";
 import { StarIcon, MapPinIcon, ClockIcon, UserIcon } from "@/components/ui/icons";
-
-const VIBE_LABELS: Record<string, string> = {
-  music_lover: "Music lover",
-  chatty: "Chatty",
-  chill: "Chill",
-  study_mode: "Study mode",
-  podcast_listener: "Podcast listener",
-  sing_along: "Sing-along",
-};
+import SocialHint from "@/components/social/SocialHint";
 
 interface RideCardProps {
   ride: Ride;
@@ -70,9 +62,9 @@ export default function RideCard({ ride, socialHint, onClick }: RideCardProps) {
 
       {/* Social hint */}
       {socialHint && (
-        <p className="mt-2 text-xs text-brand font-medium bg-brand-light px-2 py-1 rounded-lg">
-          • {socialHint}
-        </p>
+        <div className="mt-2">
+          <SocialHint hint={socialHint} />
+        </div>
       )}
     </Card>
   );

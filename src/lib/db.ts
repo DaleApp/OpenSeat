@@ -55,6 +55,14 @@ export async function getRides(filters: RideFilters): Promise<Ride[]> {
     );
   }
 
+  if (filters.timeFrom) {
+    rides = rides.filter((r) => r.departureTimeStart.slice(11, 16) >= filters.timeFrom!);
+  }
+
+  if (filters.timeTo) {
+    rides = rides.filter((r) => r.departureTimeStart.slice(11, 16) <= filters.timeTo!);
+  }
+
   rides = rides.filter((r) => r.status === "active" && r.availableSeats > 0);
 
   return rides;

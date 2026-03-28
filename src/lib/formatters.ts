@@ -1,3 +1,16 @@
+export const VIBE_OPTIONS: { key: string; label: string }[] = [
+  { key: "music_lover", label: "Music lover" },
+  { key: "chatty", label: "Chatty" },
+  { key: "chill", label: "Chill" },
+  { key: "study_mode", label: "Study mode" },
+  { key: "podcast_listener", label: "Podcast listener" },
+  { key: "sing_along", label: "Sing-along" },
+];
+
+export const VIBE_LABELS: Record<string, string> = Object.fromEntries(
+  VIBE_OPTIONS.map((v) => [v.key, v.label])
+);
+
 /**
  * Shared date/time formatters used across multiple components.
  *

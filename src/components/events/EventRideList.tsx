@@ -2,23 +2,12 @@
 
 import { Ride } from "@/types";
 import { useRouter } from "next/navigation";
-import { formatTimeRange } from "@/lib/formatters";
+import { formatTimeRange, VIBE_LABELS } from "@/lib/formatters";
 import Avatar from "@/components/ui/Avatar";
 import Card from "@/components/ui/Card";
 import Tag from "@/components/ui/Tag";
 import EmptyState from "@/components/ui/EmptyState";
-import { ClockIcon, CarIcon } from "@/components/ui/icons";
-
-// Plain-text vibe labels — must stay in sync with RideCard.tsx (Phase 3).
-// No emoji prefix here; emoji decoration is a RideCard-level concern if added later.
-const VIBE_LABELS: Record<string, string> = {
-  music_lover: "Music lover",
-  chatty: "Chatty",
-  chill: "Chill",
-  study_mode: "Study mode",
-  podcast_listener: "Podcast listener",
-  sing_along: "Sing-along",
-};
+import { ClockIcon, CarIcon, StarIcon } from "@/components/ui/icons";
 
 interface EventRideListProps {
   rides: Ride[];
@@ -51,8 +40,9 @@ export default function EventRideList({ rides }: EventRideListProps) {
                 <span className="font-semibold text-text-primary text-sm truncate">
                   {ride.driverName}
                 </span>
-                <span className="flex items-center gap-0.5 text-xs text-amber-500 shrink-0 font-medium">
-                  ★ {ride.driverRating.toFixed(1)}
+                <span className="flex items-center gap-0.5 text-xs shrink-0 font-medium">
+                  <StarIcon size={14} className="text-warning" />
+                  {ride.driverRating.toFixed(1)}
                 </span>
               </div>
 
