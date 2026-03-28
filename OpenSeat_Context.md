@@ -41,14 +41,15 @@ Un flujo completo que funcione impecable y se vea bien gana hackathons. No la ca
 ### LO QUE SE BUILDEA (debe funcionar en la demo):
 
 1. **Login simple con validación de dominio** — El usuario ingresa email + password. El frontend valida que el dominio sea el permitido (ej: @utdt.edu). Sin verificación por email real (se agrega post-hackathon). Para la demo, se usan usuarios pre-seedeados.
-2. **Perfil de usuario** — Nombre, foto, carrera/departamento, barrio, intereses (tags), datos del auto (marca, modelo, color, patente) si es conductor
+2. **Perfil de usuario** — Nombre, apellido, foto, carrera/departamento, barrio, intereses (tags), datos del auto (marca, modelo, color, patente) si es conductor
 3. **Publicar viaje (conductor)** — Origen y destino con autocompletado, fecha, hora, asientos, pickup (2 opciones: punto fijo / punto flexible), vibe del viaje (música/charla/tranqui)
 4. **Buscar viaje (pasajero)** — Búsqueda por destino + hora, resultados con cards mostrando perfil del conductor + hints sociales + ruta en mapa con pin de punto de encuentro
-5. **Solicitar viaje** — Pasajero pide viaje, conductor recibe solicitud y acepta/rechaza
+5. **Solicitar viaje** — Cualquier usuario puede solicitar unirse a un viaje publicado por otro. El usuario que publicó el viaje recibe la solicitud y puede aceptar o rechazar. No hay roles fijos: el mismo usuario puede publicar un viaje y también solicitar unirse al viaje de otro.
 6. **Post-viaje funcional** — Rating mutuo (1-5 estrellas), "buena onda" score con slider de emoji, opción de "conectar" con el otro, stats (km compartidos, CO2 ahorrado)
 7. **Badges visuales** — Se muestran en el perfil. Para el hackathon son hardcodeados en seed data (la lógica automática de desbloqueo se agrega post-hackathon)
 8. **Home** — Saludo personalizado, botones "Ofrecer viaje" / "Buscar viaje", próximos viajes cerca, bottom nav
 9. **Perfil social** — Stats, badges desbloqueados, conexiones, rating promedio
+10. **Eventos de la comunidad** — Sección donde se listan próximos eventos de la organización (ej: partido de básquet, recital, charla). Cada evento tiene fecha, hora y lugar. Al entrar a un evento, el usuario puede ver: (a) viajes publicados que van hacia ese destino en ese horario, y (b) otros miembros interesados en ir. Desde ahí puede unirse a un viaje existente o publicar uno nuevo con el destino del evento precargado.
 
 ### LO QUE NO SE BUILDEA (va en slides como "próximos pasos"):
 
