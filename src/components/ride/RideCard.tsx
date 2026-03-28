@@ -1,9 +1,9 @@
 import { Ride } from "@/types";
-import { formatTimeRange, VIBE_LABELS } from "@/lib/formatters";
+import { formatTimeRange, formatDate, VIBE_LABELS } from "@/lib/formatters";
 import Avatar from "@/components/ui/Avatar";
 import Tag from "@/components/ui/Tag";
 import Card from "@/components/ui/Card";
-import { StarIcon, MapPinIcon, ClockIcon, UserIcon } from "@/components/ui/icons";
+import { StarIcon, MapPinIcon, ClockIcon, CalendarIcon, UserIcon } from "@/components/ui/icons";
 import SocialHint from "@/components/social/SocialHint";
 
 interface RideCardProps {
@@ -14,6 +14,7 @@ interface RideCardProps {
 
 export default function RideCard({ ride, socialHint, onClick }: RideCardProps) {
   const vibeLabel = VIBE_LABELS[ride.driverVibe] ?? ride.driverVibe;
+  const rideDate = formatDate(ride.departureTimeStart.split("T")[0]);
   const timeRange = formatTimeRange(ride.departureTimeStart, ride.departureTimeEnd);
 
   return (
@@ -45,6 +46,10 @@ export default function RideCard({ ride, socialHint, onClick }: RideCardProps) {
 
       {/* Meta row */}
       <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-1 text-text-secondary text-xs">
+          <CalendarIcon size={13} />
+          <span>{rideDate}</span>
+        </div>
         <div className="flex items-center gap-1 text-text-secondary text-xs">
           <ClockIcon size={13} />
           <span>{timeRange}</span>
