@@ -89,7 +89,7 @@ Files to create:
 - `src/components/ride/RideMap.tsx` — Google Maps with 3 pins: origin, destination, suggested meeting point. Fallback to static placeholder if no API key.
 - `src/components/ride/PickupSelector.tsx` — **Reusable in both ride request and publish forms.** Shows 2 options: "Fixed point" / "Flexible point". When flexible is selected, shows radius selector: 1, 2, 5, 10 miles.
 - `src/components/ride/PassengerList.tsx` — passenger cards with accept/reject for driver
-- `src/components/ride/RideRequest.tsx` — modal/screen to request ride. Includes passenger pickup preference selector ("Pick me up" / "I'll go to you" / "Flexible"). Checks pickup compatibility before showing "Request" button. If incompatible, shows explanation message.
+- `src/components/ride/RideRequest.tsx` — modal/screen to request ride. Includes passenger pickup preference selector ("Pick me up" / "Flexible"). Checks pickup compatibility before showing "Request" button. If incompatible, shows explanation message.
 - `src/app/(main)/ride/[id]/page.tsx`
 
 Modify:
