@@ -347,7 +347,7 @@ src/app/
 ## 8. Main components
 
 ### Layout
-- `BottomNav` — Bottom mobile navigation: Home, Search, My Rides, Profile (4 tabs, 64px height)
+- `BottomNav` — Bottom mobile navigation: Home, Search, Publish, Profile (4 tabs, 64px height)
 - `TopBar` — Top bar with OpenSeat logo + user avatar
 
 ### Auth
