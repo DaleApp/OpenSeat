@@ -64,7 +64,7 @@ export default function RideCard({ ride, socialHint, onClick }: RideCardProps) {
         <Tag label={vibeLabel} />
         <Tag
           label={ride.pickupFlexibility === "flexible" ? "Flexible" : "Fixed"}
-          variant={ride.pickupFlexibility === "flexible" ? "success" : "default"}
+          variant={ride.pickupFlexibility === "flexible" ? "info" : "danger"}
         />
       </div>
 
