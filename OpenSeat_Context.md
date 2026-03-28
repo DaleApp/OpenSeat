@@ -374,7 +374,8 @@ Nota: Se eliminó `register/car/page.tsx` como página separada. Los datos del a
 - `RideCard` — Card de resultado de búsqueda (foto conductor, carrera, rating, hora, asientos, vibe, hints sociales)
 - `RideDetail` — Vista completa del viaje con mapa, info del conductor, botón solicitar
 - `RideMap` — Mapa Google Maps con pins de origen, destino y punto de encuentro
-- `PickupSelector` — Selector de 2 opciones: punto fijo / punto flexible
+- `PickupSelector` — Selector de 2 opciones: punto fijo / punto flexible. 
+  Si se elige "flexible", aparece un segundo selector de radio: 1, 2, 5, 10 km.
 - `VibeSelector` — Selector de vibe: música / charla / tranqui (toggle pills)
 - `SeatSelector` — Selector de 1-4 asientos
 - `PassengerRequest` — Card de solicitud pendiente (para el conductor: aceptar/rechazar)
@@ -420,7 +421,10 @@ Nota: Se eliminó `register/car/page.tsx` como página separada. Los datos del a
 2. Ingresa destino (AddressInput con autocompletado Google Places)
 3. Selecciona fecha y hora
 4. Selecciona asientos (1-4)
-5. Selecciona pickup: punto fijo o punto flexible (+ radio si flexible)
+5. Selecciona pickup:
+   - "Punto fijo" → no pide nada más
+   - "Punto flexible" → aparece selector de radio: 1, 2, 5, 10 km
+     (se guarda en flexibleRadiusKm)
 6. Selecciona vibe: música / charla / tranqui
 7. Nota opcional
 8. Publica → se crea doc en Firestore con status "active"
