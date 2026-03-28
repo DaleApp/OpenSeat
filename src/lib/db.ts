@@ -13,6 +13,11 @@ export async function getUserById(userId: string): Promise<User | null> {
   return MOCK_USERS.find((u) => u.id === userId) ?? null;
 }
 
+// Post-hackathon: replace with where('__name__', 'in', ids) batch query
+export async function getUsersByIds(ids: string[]): Promise<User[]> {
+  return MOCK_USERS.filter((u) => ids.includes(u.id));
+}
+
 export async function getUserByEmail(email: string): Promise<User | null> {
   return MOCK_USERS.find((u) => u.email === email) ?? null;
 }

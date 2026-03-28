@@ -2,7 +2,7 @@
 
 interface TagProps {
   label: string;
-  variant?: "default" | "success" | "warning";
+  variant?: "default" | "success" | "warning" | "info" | "danger";
   selected?: boolean;
   onClick?: () => void;
   className?: string;
@@ -19,6 +19,8 @@ export default function Tag({
     default: "bg-brand-light text-brand-dark",
     success: "bg-green-100 text-green-800",
     warning: "bg-amber-100 text-amber-800",
+    info: "bg-blue-100 text-blue-800",
+    danger: "bg-red-100 text-red-800",
   };
 
   const selectedClass = selected
