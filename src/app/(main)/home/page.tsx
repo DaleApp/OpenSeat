@@ -30,16 +30,17 @@ export default function HomePage() {
 
   useEffect(() => {
     if (!user) return;
+    const currentUser = user;
 
     async function load() {
       const [allRides, myRidesData, eventsData] = await Promise.all([
         getRides({}),
-        getUserRides(user!.id),
+        getUserRides(currentUser.id),
         getEvents(),
       ]);
 
       const nearby = allRides
-        .filter((r) => r.driverId !== user!.id)
+        .filter((r) => r.driverId !== currentUser.id)
         .slice(0, 5);
 
       // Fetch full driver User objects for social hints

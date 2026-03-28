@@ -1,4 +1,5 @@
 import { Ride } from "@/types";
+import { formatTimeRange } from "@/lib/formatters";
 import Avatar from "@/components/ui/Avatar";
 import Tag from "@/components/ui/Tag";
 import Card from "@/components/ui/Card";
@@ -12,17 +13,6 @@ const VIBE_LABELS: Record<string, string> = {
   podcast_listener: "Podcast listener",
   sing_along: "Sing-along",
 };
-
-function formatTimeRange(start: string, end: string): string {
-  const fmt = (iso: string) => {
-    const [, time] = iso.split("T");
-    const [h, m] = time.split(":").map(Number);
-    const period = h >= 12 ? "PM" : "AM";
-    const hour = h % 12 || 12;
-    return `${hour}:${m.toString().padStart(2, "0")} ${period}`;
-  };
-  return `${fmt(start)} – ${fmt(end)}`;
-}
 
 interface RideCardProps {
   ride: Ride;
