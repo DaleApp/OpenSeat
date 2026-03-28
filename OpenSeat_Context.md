@@ -53,7 +53,7 @@ One complete flow that works flawlessly and looks good wins hackathons. Not the 
 - Automatic meeting point calculation with routing API
 - Venmo / Zelle integration (mentioned as future)
 - Admin web panel
-- Recurring rides (e.g. "every Tuesday" schedules — search by recurrence pattern, auto-publish weekly rides)
+- Recurring rides
 - Community feed
 - Real-time location sharing during ride
 - Automatic badge logic (post-hackathon, shown hardcoded)
