@@ -1,18 +1,9 @@
 import { Ride } from "@/types";
-import { formatTimeRange } from "@/lib/formatters";
+import { formatTimeRange, VIBE_LABELS } from "@/lib/formatters";
 import Avatar from "@/components/ui/Avatar";
 import Tag from "@/components/ui/Tag";
 import Card from "@/components/ui/Card";
 import { StarIcon, MapPinIcon, ClockIcon, UserIcon } from "@/components/ui/icons";
-
-const VIBE_LABELS: Record<string, string> = {
-  music_lover: "Music lover",
-  chatty: "Chatty",
-  chill: "Chill",
-  study_mode: "Study mode",
-  podcast_listener: "Podcast listener",
-  sing_along: "Sing-along",
-};
 
 interface RideCardProps {
   ride: Ride;

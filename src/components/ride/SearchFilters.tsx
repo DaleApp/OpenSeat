@@ -1,18 +1,10 @@
 "use client";
 
 import { RideFilters } from "@/types";
+import { VIBE_OPTIONS } from "@/lib/formatters";
 import Input from "@/components/ui/Input";
 import Tag from "@/components/ui/Tag";
 import { MapPinIcon, CalendarIcon, ClockIcon } from "@/components/ui/icons";
-
-const VIBES = [
-  { key: "music_lover", label: "Music lover" },
-  { key: "chatty", label: "Chatty" },
-  { key: "chill", label: "Chill" },
-  { key: "study_mode", label: "Study mode" },
-  { key: "podcast_listener", label: "Podcast" },
-  { key: "sing_along", label: "Sing-along" },
-];
 
 interface SearchFiltersProps {
   filters: RideFilters;
@@ -37,6 +29,7 @@ export default function SearchFilters({ filters, onChange }: SearchFiltersProps)
       <Input
         label="Date"
         type="date"
+        min={new Date().toISOString().split("T")[0]}
         value={filters.date ?? ""}
         onChange={(e) => update({ date: e.target.value })}
         icon={<CalendarIcon size={18} />}
@@ -62,7 +55,7 @@ export default function SearchFilters({ filters, onChange }: SearchFiltersProps)
       <div>
         <p className="text-sm font-medium text-text-primary mb-2">Vibe</p>
         <div className="flex flex-wrap gap-2">
-          {VIBES.map((v) => (
+          {VIBE_OPTIONS.map((v) => (
             <Tag
               key={v.key}
               label={v.label}

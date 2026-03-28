@@ -20,10 +20,12 @@ export default function RideSearchPage() {
   const [driverMap, setDriverMap] = useState<Map<string, User>>(new Map());
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const search = useCallback(async () => {
     setLoading(true);
     setSearched(true);
+    setError(null);
     try {
       const results = await getRides(filters);
       // Exclude own rides
@@ -35,15 +37,17 @@ export default function RideSearchPage() {
       const drivers = await getUsersByIds(driverIds);
       setDriverMap(new Map(drivers.map((u) => [u.id, u])));
       setRides(filtered);
+    } catch {
+      setError("Could not load rides. Please try again.");
     } finally {
       setLoading(false);
     }
   }, [filters, user]);
 
-  // Search on mount to show all available rides
+  // Search on mount and when demo user switches
   useEffect(() => {
     search();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="px-4 py-5 pb-8">
@@ -61,6 +65,13 @@ export default function RideSearchPage() {
         {loading ? (
           <div className="flex justify-center py-8">
             <div className="w-6 h-6 border-2 border-brand border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : error ? (
+          <div className="flex flex-col items-center py-8 gap-3">
+            <p className="text-sm text-text-secondary text-center">{error}</p>
+            <Button size="sm" variant="secondary" onClick={search}>
+              Try again
+            </Button>
           </div>
         ) : rides.length > 0 ? (
           <>
