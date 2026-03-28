@@ -63,5 +63,4 @@ export interface RideFilters {
   date?: string;
   timeFrom?: string;
   timeTo?: string;
-  vibe?: string;
 }
