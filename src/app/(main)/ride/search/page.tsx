@@ -11,6 +11,19 @@ import RideCard from "@/components/ride/RideCard";
 import EmptyState from "@/components/ui/EmptyState";
 import Button from "@/components/ui/Button";
 import { SearchIcon } from "@/components/ui/icons";
+import { GeoPoint } from "@/types/user";
+
+/** Haversine distance in miles between two GeoPoints */
+function distanceMi(a: GeoPoint, b: GeoPoint): number {
+  const toRad = (deg: number) => (deg * Math.PI) / 180;
+  const R = 3959; // Earth radius in miles
+  const dLat = toRad(b.lat - a.lat);
+  const dLng = toRad(b.lng - a.lng);
+  const sin2 =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(sin2));
+}
 
 export default function RideSearchPage() {
   const router = useRouter();
@@ -33,6 +46,14 @@ export default function RideSearchPage() {
         ? results.filter((r) => r.driverId !== user.id)
         : results;
 
+      // Sort by proximity to user's address
+      if (user?.address) {
+        const userAddr = user.address;
+        filtered.sort(
+          (a, b) => distanceMi(a.origin, userAddr) - distanceMi(b.origin, userAddr)
+        );
+      }
+
       const driverIds = Array.from(new Set(filtered.map((r) => r.driverId)));
       const drivers = await getUsersByIds(driverIds);
       setDriverMap(new Map(drivers.map((u) => [u.id, u])));
@@ -47,7 +68,7 @@ export default function RideSearchPage() {
   // Search on mount and when demo user switches
   useEffect(() => {
     search();
-  }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [search]);
 
   return (
     <div className="px-4 py-5 pb-8">

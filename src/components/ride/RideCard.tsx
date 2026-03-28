@@ -4,6 +4,7 @@ import Avatar from "@/components/ui/Avatar";
 import Tag from "@/components/ui/Tag";
 import Card from "@/components/ui/Card";
 import { StarIcon, MapPinIcon, ClockIcon, UserIcon } from "@/components/ui/icons";
+import SocialHint from "@/components/social/SocialHint";
 
 interface RideCardProps {
   ride: Ride;
@@ -61,9 +62,9 @@ export default function RideCard({ ride, socialHint, onClick }: RideCardProps) {
 
       {/* Social hint */}
       {socialHint && (
-        <p className="mt-2 text-xs text-brand font-medium bg-brand-light px-2 py-1 rounded-lg">
-          • {socialHint}
-        </p>
+        <div className="mt-2">
+          <SocialHint hint={socialHint} />
+        </div>
       )}
     </Card>
   );

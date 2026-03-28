@@ -5,7 +5,7 @@ import { formatEventDateTime } from "@/lib/formatters";
 import EventRideList from "@/components/events/EventRideList";
 import Button from "@/components/ui/Button";
 import Avatar from "@/components/ui/Avatar";
-import { CalendarIcon, MapPinIcon, UserIcon } from "@/components/ui/icons";
+import { CalendarIcon, MapPinIcon, UserIcon, ArrowLeftIcon } from "@/components/ui/icons";
 
 /**
  * EventDetailPage — /events/[id] — Phase 4 (feat/events)
@@ -76,7 +76,7 @@ export default async function EventDetailPage({ params }: PageProps) {
           href="/events"
           className="inline-flex items-center gap-1 text-sm text-brand font-medium hover:underline"
         >
-          ← Events
+          <ArrowLeftIcon size={16} /> Events
         </Link>
       </div>
 
