@@ -11,19 +11,7 @@ import RideCard from "@/components/ride/RideCard";
 import EmptyState from "@/components/ui/EmptyState";
 import Button from "@/components/ui/Button";
 import { SearchIcon } from "@/components/ui/icons";
-import { GeoPoint } from "@/types/user";
-
-/** Haversine distance in miles between two GeoPoints */
-function distanceMi(a: GeoPoint, b: GeoPoint): number {
-  const toRad = (deg: number) => (deg * Math.PI) / 180;
-  const R = 3959; // Earth radius in miles
-  const dLat = toRad(b.lat - a.lat);
-  const dLng = toRad(b.lng - a.lng);
-  const sin2 =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLng / 2) ** 2;
-  return 2 * R * Math.asin(Math.sqrt(sin2));
-}
+import { distanceMi } from "@/lib/maps";
 
 export default function RideSearchPage() {
   const router = useRouter();
