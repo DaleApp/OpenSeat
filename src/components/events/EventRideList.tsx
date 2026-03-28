@@ -9,15 +9,15 @@ import Tag from "@/components/ui/Tag";
 import EmptyState from "@/components/ui/EmptyState";
 import { ClockIcon, CarIcon } from "@/components/ui/icons";
 
-// Maps internal vibe keys to display labels.
-// Keep in sync with VibeSelector (Phase 7) if keys ever change.
+// Plain-text vibe labels — must stay in sync with RideCard.tsx (Phase 3).
+// No emoji prefix here; emoji decoration is a RideCard-level concern if added later.
 const VIBE_LABELS: Record<string, string> = {
-  music_lover: "🎵 Music lover",
-  chatty: "💬 Chatty",
-  chill: "😌 Chill",
-  study_mode: "📚 Study mode",
-  podcast_listener: "🎧 Podcast",
-  sing_along: "🎤 Sing-along",
+  music_lover: "Music lover",
+  chatty: "Chatty",
+  chill: "Chill",
+  study_mode: "Study mode",
+  podcast_listener: "Podcast listener",
+  sing_along: "Sing-along",
 };
 
 interface EventRideListProps {
@@ -73,13 +73,10 @@ export default function EventRideList({ rides }: EventRideListProps) {
                 {VIBE_LABELS[ride.driverVibe] && (
                   <Tag label={VIBE_LABELS[ride.driverVibe]} />
                 )}
-                {/* info/warning match Phase 3 RideCard pickup badge convention */}
+                {/* Label and variant must match RideCard.tsx exactly so both
+                    components show identical pickup badges across the app. */}
                 <Tag
-                  label={
-                    ride.pickupFlexibility === "flexible"
-                      ? `Flexible · ${ride.flexibleRadiusMi} mi`
-                      : "Fixed point"
-                  }
+                  label={ride.pickupFlexibility === "flexible" ? "Flexible" : "Fixed"}
                   variant={ride.pickupFlexibility === "flexible" ? "info" : "warning"}
                 />
               </div>

@@ -398,7 +398,9 @@ export const MOCK_EVENTS: CommunityEvent[] = [
       lat: 35.9100,
       lng: -79.0478,
     },
-    interestedUsers: ["user1", "user2", "user3"],
+    // Context doc §14: 15 interested. Real users listed first (shown as avatars in detail
+    // page). Placeholder IDs pad the count — getUsersByIds skips unknowns, .length drives display.
+    interestedUsers: ["user1", "user2", "user3", "p01", "p02", "p03", "p04", "p05", "p06", "p07", "p08", "p09", "p10", "p11", "p12"],
     createdAt: now,
   },
   {
@@ -412,7 +414,8 @@ export const MOCK_EVENTS: CommunityEvent[] = [
       lat: 35.9105,
       lng: -79.0530,
     },
-    interestedUsers: ["user1", "user4"],
+    // Context doc §14: 8 interested.
+    interestedUsers: ["user1", "user4", "p01", "p02", "p03", "p04", "p05", "p06"],
     createdAt: now,
   },
   {
@@ -426,7 +429,8 @@ export const MOCK_EVENTS: CommunityEvent[] = [
       lat: 35.9119,
       lng: -79.0510,
     },
-    interestedUsers: ["user2", "user3", "user5"],
+    // Context doc §14: 22 interested.
+    interestedUsers: ["user2", "user3", "user5", "p01", "p02", "p03", "p04", "p05", "p06", "p07", "p08", "p09", "p10", "p11", "p12", "p13", "p14", "p15", "p16", "p17", "p18", "p19"],
     createdAt: now,
   },
 ];
