@@ -48,7 +48,6 @@ export default function LoginForm() {
         placeholder="yourname@unc.edu"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        error={error && !password ? error : undefined}
         required
       />
       <Input
@@ -59,7 +58,7 @@ export default function LoginForm() {
         onChange={(e) => setPassword(e.target.value)}
         required
       />
-      {error && password && (
+      {error && (
         <p className="text-error text-sm">{error}</p>
       )}
       <Button type="submit" loading={loading} className="w-full mt-2">

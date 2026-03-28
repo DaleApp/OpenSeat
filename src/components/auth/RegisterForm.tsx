@@ -43,7 +43,8 @@ export default function RegisterForm() {
     setLoading(true);
     try {
       await register(email, password);
-      router.push("/home");
+      // TODO: redirect to /profile/complete when Phase 8 is ready
+      router.push("/profile/complete");
     } catch {
       setError("Could not create account. Try again.");
     } finally {

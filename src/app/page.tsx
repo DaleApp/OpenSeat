@@ -20,7 +20,10 @@ export default function WelcomePage() {
 
       <div className="flex flex-col gap-3 w-full max-w-xs">
         <Link href="/login" className="btn-primary text-center">
-          Get Started
+          Sign in
+        </Link>
+        <Link href="/register" className="btn-secondary text-center">
+          Create account
         </Link>
       </div>
 
