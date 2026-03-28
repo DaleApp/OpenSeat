@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import BottomNav from "@/components/ui/BottomNav";
 import TopBar from "@/components/ui/TopBar";
-import { AuthProvider, useAuth } from "@/lib/auth-context";
+import { useAuth } from "@/lib/auth-context";
 import DemoUserSwitch from "@/components/auth/DemoUserSwitch";
 
 function AuthGate({ children }: { children: React.ReactNode }) {
@@ -17,15 +17,13 @@ function AuthGate({ children }: { children: React.ReactNode }) {
     }
   }, [user, loading, isDemoMode, router]);
 
-  if (loading) {
+  if (loading || (!user && !isDemoMode)) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-brand border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
-
-  if (!user && !isDemoMode) return null;
 
   return <>{children}</>;
 }
@@ -36,15 +34,13 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   return (
-    <AuthProvider>
-      <AuthGate>
-        <div className="min-h-screen pb-nav-height">
-          <TopBar title="OpenSeat" />
-          <main>{children}</main>
-          <BottomNav />
-          <DemoUserSwitch />
-        </div>
-      </AuthGate>
-    </AuthProvider>
+    <AuthGate>
+      <div className="min-h-screen pb-nav-height">
+        <TopBar title="OpenSeat" />
+        <main>{children}</main>
+        <BottomNav />
+        <DemoUserSwitch />
+      </div>
+    </AuthGate>
   );
 }
