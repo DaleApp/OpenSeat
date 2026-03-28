@@ -2,9 +2,9 @@ import { Ride, RideFilters, User } from "@/types";
 import { MOCK_USERS, MOCK_RIDES } from "./mock-data";
 
 // =============================================================
-// Hackathon: funciones devuelven mock data.
-// Post-hackathon: reemplazar implementación por queries a Firestore.
-// La interfaz (firma de función + tipos de retorno) NO cambia.
+// Hackathon: functions return mock data.
+// Post-hackathon: replace implementation with Firestore queries.
+// The interface (function signature + return types) does NOT change.
 // =============================================================
 
 // --- Users ---
