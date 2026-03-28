@@ -13,7 +13,11 @@ export async function getUserById(userId: string): Promise<User | null> {
   return MOCK_USERS.find((u) => u.id === userId) ?? null;
 }
 
-// Post-hackathon: replace with where('__name__', 'in', ids) batch query
+/**
+ * Batch-fetches multiple users by ID in a single pass.
+ * Use this instead of calling getUserById() in a loop to avoid N+1 queries.
+ * Post-hackathon: replace with a Firestore `where('__name__', 'in', ids)` query.
+ */
 export async function getUsersByIds(ids: string[]): Promise<User[]> {
   return MOCK_USERS.filter((u) => ids.includes(u.id));
 }
