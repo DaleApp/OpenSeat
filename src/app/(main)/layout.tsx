@@ -1,5 +1,4 @@
 import BottomNav from "@/components/ui/BottomNav";
-import TopBar from "@/components/ui/TopBar";
 
 export default function MainLayout({
   children,
@@ -8,7 +7,6 @@ export default function MainLayout({
 }) {
   return (
     <div className="min-h-screen pb-nav-height">
-      <TopBar />
       <main>{children}</main>
       <BottomNav />
     </div>
