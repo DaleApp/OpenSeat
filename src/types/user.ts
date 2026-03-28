@@ -1,14 +1,22 @@
 import { Timestamp } from "firebase/firestore";
 
+export interface GeoPoint {
+  address: string;
+  lat: number;
+  lng: number;
+}
+
 export interface User {
   id: string;
   email: string;
   name: string;
   photoUrl?: string;
-  department: string;
-  neighborhood: string;
-  bio?: string;
+  address: GeoPoint;
+  major: string;
+  status: "student" | "professor" | "staff" | "other";
   interests: string[];
+  vibe?: string;
+  clubs: string[];
 
   car?: Car;
 
@@ -20,6 +28,7 @@ export interface User {
 }
 
 export interface Car {
+  driversLicenseUrl: string;
   brand: string;
   model: string;
   color: string;
@@ -32,7 +41,7 @@ export interface UserStats {
   co2Saved: number;
   peopleConnected: number;
   averageRating: number;
-  averageBuenaOnda: number;
+  averageGoodVibes: number;
   totalRatings: number;
 }
 
