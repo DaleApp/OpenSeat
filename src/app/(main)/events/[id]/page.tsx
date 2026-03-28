@@ -1,30 +1,49 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getEventById, getRidesForEvent, getUserById } from "@/lib/db";
+import { getEventById, getRidesForEvent, getUsersByIds } from "@/lib/db";
+import { formatEventDateTime } from "@/lib/formatters";
 import EventRideList from "@/components/events/EventRideList";
 import Button from "@/components/ui/Button";
 import Avatar from "@/components/ui/Avatar";
 import { CalendarIcon, MapPinIcon, UserIcon } from "@/components/ui/icons";
-import { User } from "@/types";
 
-function formatEventDateTime(date: string, time: string): string {
-  const [year, month, day] = date.split("-").map(Number);
-  const d = new Date(year, month - 1, day);
-  const dayOfWeek = d.toLocaleString("en-US", { weekday: "long" });
-  const monthName = d.toLocaleString("en-US", { month: "long" });
-  const [hour, minute] = time.split(":").map(Number);
-  const ampm = hour >= 12 ? "PM" : "AM";
-  const h = hour % 12 || 12;
-  const m = minute.toString().padStart(2, "0");
-  return `${dayOfWeek}, ${monthName} ${day} · ${h}:${m} ${ampm}`;
-}
+/**
+ * EventDetailPage — /events/[id] — Phase 4 (feat/events)
+ *
+ * Shows full details for a single community event:
+ *   - Name, formatted date/time, location, optional description
+ *   - Stacked avatars of up to 5 interested members (batch-fetched via getUsersByIds)
+ *   - EventRideList: rides linked to this event via ride.eventId
+ *   - "Publish a ride for this event" CTA — pre-fills /ride/new via URL params:
+ *       destination, eventName, eventId
+ *     Phase 7 (RideForm / ride/new/page.tsx) reads these params to pre-fill the form.
+ *
+ * Server Component — data is fetched at render time (no useEffect needed).
+ * EventRideList is a client component that handles its own tap navigation.
+ *
+ * params type:
+ *   Next.js 14 — params is a plain { id: string } object (NOT a Promise).
+ *   Next.js 15 changed this to Promise<{ id: string }> — do NOT upgrade yet.
+ *
+ * N+1 fix:
+ *   Interested users are fetched in one batch with getUsersByIds()
+ *   instead of calling getUserById() per user in a loop.
+ *   Post-hackathon: Firestore equivalent is where('__name__', 'in', ids).
+ *
+ * Active rides filter:
+ *   Only rides with status "active" or "full" are shown.
+ *   "full" rides are still shown so passengers can see demand and add to waitlist
+ *   (waitlist is a post-hackathon feature — for now they just see the ride).
+ */
 
 interface PageProps {
-  params: Promise<{ id: string }>;
+  // Next.js 14: params is a plain object, not a Promise
+  params: { id: string };
 }
 
 export default async function EventDetailPage({ params }: PageProps) {
-  const { id } = await params;
+  const { id } = params;
+
   const [event, rides] = await Promise.all([
     getEventById(id),
     getRidesForEvent(id),
@@ -32,24 +51,26 @@ export default async function EventDetailPage({ params }: PageProps) {
 
   if (!event) notFound();
 
-  // Fetch up to 5 interested users to show avatars
-  const interestedUsers: User[] = (
-    await Promise.all(
-      event.interestedUsers.slice(0, 5).map((uid) => getUserById(uid))
-    )
-  ).filter((u): u is User => u !== null);
+  // Batch-fetch up to 5 interested users to display their avatars
+  const interestedUsers = await getUsersByIds(
+    event.interestedUsers.slice(0, 5)
+  );
 
-  const publishHref = `/ride/new?destination=${encodeURIComponent(
-    event.location.address
-  )}&eventName=${encodeURIComponent(event.name)}&eventId=${event.id}`;
-
+  // Filter to rides that passengers can still act on
   const activeRides = rides.filter(
     (r) => r.status === "active" || r.status === "full"
   );
 
+  // Build the pre-fill URL for /ride/new (Phase 7 reads these query params)
+  const publishHref =
+    `/ride/new` +
+    `?destination=${encodeURIComponent(event.location.address)}` +
+    `&eventName=${encodeURIComponent(event.name)}` +
+    `&eventId=${event.id}`;
+
   return (
     <div className="pb-6">
-      {/* Back link */}
+      {/* Back to events list */}
       <div className="px-4 pt-4 mb-2">
         <Link
           href="/events"
@@ -66,6 +87,7 @@ export default async function EventDetailPage({ params }: PageProps) {
         </h1>
 
         <div className="flex flex-col gap-2 mb-3">
+          {/* formatEventDateTime from lib/formatters → "Friday, April 10 · 7:00 PM" */}
           <div className="flex items-center gap-2 text-sm text-text-secondary">
             <CalendarIcon size={16} className="text-brand shrink-0" />
             <span>{formatEventDateTime(event.date, event.time)}</span>
@@ -80,7 +102,7 @@ export default async function EventDetailPage({ params }: PageProps) {
           <p className="text-sm text-text-secondary mb-3">{event.description}</p>
         )}
 
-        {/* Interested users */}
+        {/* Interested members — stacked avatars + total count */}
         {interestedUsers.length > 0 && (
           <div className="flex items-center gap-2">
             <div className="flex -space-x-2">
@@ -97,7 +119,7 @@ export default async function EventDetailPage({ params }: PageProps) {
         )}
       </div>
 
-      {/* Rides section */}
+      {/* Available rides section */}
       <div className="px-4 pt-4">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-base font-semibold text-text-primary">
@@ -110,9 +132,10 @@ export default async function EventDetailPage({ params }: PageProps) {
           )}
         </div>
 
-        <EventRideList rides={activeRides} eventId={event.id} />
+        {/* EventRideList is a client component — handles tap → /ride/[id] */}
+        <EventRideList rides={activeRides} />
 
-        {/* Publish CTA */}
+        {/* Publish CTA — destination and eventName pre-fill the ride form (Phase 7) */}
         <div className="mt-6 pt-4 border-t border-border">
           <p className="text-sm text-text-secondary mb-3 text-center">
             Going to this event? Offer a ride!

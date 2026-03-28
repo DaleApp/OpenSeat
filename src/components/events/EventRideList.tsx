@@ -2,11 +2,14 @@
 
 import { Ride } from "@/types";
 import { useRouter } from "next/navigation";
+import { formatTimeRange } from "@/lib/formatters";
 import Avatar from "@/components/ui/Avatar";
 import Tag from "@/components/ui/Tag";
 import EmptyState from "@/components/ui/EmptyState";
 import { ClockIcon, CarIcon } from "@/components/ui/icons";
 
+// Maps internal vibe keys to display labels.
+// Keep in sync with VibeSelector (Phase 7) if keys ever change.
 const VIBE_LABELS: Record<string, string> = {
   music_lover: "🎵 Music lover",
   chatty: "💬 Chatty",
@@ -16,23 +19,11 @@ const VIBE_LABELS: Record<string, string> = {
   sing_along: "🎤 Sing-along",
 };
 
-function formatTimeRange(start: string, end: string): string {
-  const fmt = (iso: string) => {
-    const timePart = iso.split("T")[1] ?? iso;
-    const [h, m] = timePart.split(":").map(Number);
-    const ampm = h >= 12 ? "PM" : "AM";
-    const hour = h % 12 || 12;
-    return `${hour}:${m.toString().padStart(2, "0")} ${ampm}`;
-  };
-  return `${fmt(start)} – ${fmt(end)}`;
-}
-
 interface EventRideListProps {
   rides: Ride[];
-  eventId: string;
 }
 
-export default function EventRideList({ rides, eventId }: EventRideListProps) {
+export default function EventRideList({ rides }: EventRideListProps) {
   const router = useRouter();
 
   if (rides.length === 0) {
