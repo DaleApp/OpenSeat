@@ -68,7 +68,7 @@ export default function RideSearchPage() {
   // Search on mount and when demo user switches
   useEffect(() => {
     search();
-  }, [search]);
+  }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="px-4 py-5 pb-8">
