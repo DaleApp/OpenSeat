@@ -4,6 +4,7 @@ import { Ride } from "@/types";
 import { useRouter } from "next/navigation";
 import { formatTimeRange } from "@/lib/formatters";
 import Avatar from "@/components/ui/Avatar";
+import Card from "@/components/ui/Card";
 import Tag from "@/components/ui/Tag";
 import EmptyState from "@/components/ui/EmptyState";
 import { ClockIcon, CarIcon } from "@/components/ui/icons";
@@ -38,15 +39,9 @@ export default function EventRideList({ rides }: EventRideListProps) {
   return (
     <div className="flex flex-col gap-3">
       {rides.map((ride) => (
-        <div
+        <Card
           key={ride.id}
-          role="button"
-          tabIndex={0}
           onClick={() => router.push(`/ride/${ride.id}`)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") router.push(`/ride/${ride.id}`);
-          }}
-          className="card cursor-pointer hover:shadow-md transition-shadow active:scale-[0.99]"
         >
           <div className="flex items-start gap-3">
             <Avatar src={ride.driverPhotoUrl} name={ride.driverName} size="md" />
@@ -78,18 +73,19 @@ export default function EventRideList({ rides }: EventRideListProps) {
                 {VIBE_LABELS[ride.driverVibe] && (
                   <Tag label={VIBE_LABELS[ride.driverVibe]} />
                 )}
+                {/* info/warning match Phase 3 RideCard pickup badge convention */}
                 <Tag
                   label={
                     ride.pickupFlexibility === "flexible"
                       ? `Flexible · ${ride.flexibleRadiusMi} mi`
                       : "Fixed point"
                   }
-                  variant={ride.pickupFlexibility === "flexible" ? "success" : "default"}
+                  variant={ride.pickupFlexibility === "flexible" ? "info" : "warning"}
                 />
               </div>
             </div>
           </div>
-        </div>
+        </Card>
       ))}
     </div>
   );

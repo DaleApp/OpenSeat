@@ -28,19 +28,43 @@ import { CommunityEvent } from "@/types";
 
 export default function EventsPage() {
   const [events, setEvents] = useState<CommunityEvent[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    getEvents().then((data) => {
-      // Sort ascending so the nearest upcoming event appears first
-      const sorted = [...data].sort((a, b) => {
-        const da = new Date(`${a.date}T${a.time}`).getTime();
-        const db = new Date(`${b.date}T${b.time}`).getTime();
-        return da - db;
-      });
-      setEvents(sorted);
-    });
+    getEvents()
+      .then((data) => {
+        const sorted = [...data].sort((a, b) => {
+          const da = new Date(`${a.date}T${a.time}`).getTime();
+          const db = new Date(`${b.date}T${b.time}`).getTime();
+          return da - db;
+        });
+        setEvents(sorted);
+      })
+      .catch(() => setError(true))
+      .finally(() => setLoading(false));
   }, []);
+
+  // Matches the loading spinner pattern used in home/page.tsx (Phase 3)
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center py-20">
+        <div className="w-8 h-8 border-2 border-brand border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="px-4 py-5">
+        <EmptyState
+          title="Couldn't load events"
+          subtitle="Something went wrong. Pull down to retry."
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="px-4 py-5">
