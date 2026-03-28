@@ -61,6 +61,9 @@ export default function LoginForm() {
       {error && (
         <p className="text-error text-sm">{error}</p>
       )}
+      {isDemoMode && (
+        <p className="text-text-secondary text-sm text-center">Demo mode — click to continue</p>
+      )}
       <Button type="submit" loading={loading} className="w-full mt-2">
         Sign in
       </Button>

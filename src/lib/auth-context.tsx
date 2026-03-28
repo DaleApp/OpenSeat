@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useState, ReactNode } from "react";
 import { onAuthStateChanged, User as FirebaseUser } from "firebase/auth";
 import { auth, hasFirebaseConfig } from "./firebase";
 import { getUserByEmail } from "./db";
@@ -32,12 +32,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const isDemoMode =
-    process.env.NEXT_PUBLIC_DEMO_MODE === "true" || !hasFirebaseConfig;
+  const isDemoMode = useMemo(
+    () => process.env.NEXT_PUBLIC_DEMO_MODE === "true" || !hasFirebaseConfig,
+    []
+  );
 
   useEffect(() => {
     if (isDemoMode) {
-      setUser(MOCK_USERS[0]);
+      setUser(MOCK_USERS[0] ?? null);
       setLoading(false);
       return;
     }
