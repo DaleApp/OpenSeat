@@ -1,4 +1,4 @@
-import { Ride, User } from "@/types";
+import { Ride } from "@/types";
 import Avatar from "@/components/ui/Avatar";
 import Tag from "@/components/ui/Tag";
 import Card from "@/components/ui/Card";
@@ -22,14 +22,6 @@ function formatTimeRange(start: string, end: string): string {
     return `${hour}:${m.toString().padStart(2, "0")} ${period}`;
   };
   return `${fmt(start)} – ${fmt(end)}`;
-}
-
-export function computeSocialHint(ride: Ride, currentUser?: User): string | null {
-  if (!currentUser || currentUser.id === ride.driverId) return null;
-  if (ride.driverMajor === currentUser.major) {
-    return `You both study ${ride.driverMajor}`;
-  }
-  return null;
 }
 
 interface RideCardProps {
@@ -70,7 +62,7 @@ export default function RideCard({ ride, socialHint, onClick }: RideCardProps) {
       </div>
 
       {/* Meta row */}
-      <div className="flex items-center gap-3 flex-wrap">
+      <div className="flex items-center gap-2 flex-wrap">
         <div className="flex items-center gap-1 text-text-secondary text-xs">
           <ClockIcon size={13} />
           <span>{timeRange}</span>
@@ -80,6 +72,10 @@ export default function RideCard({ ride, socialHint, onClick }: RideCardProps) {
           <span>{ride.availableSeats} {ride.availableSeats === 1 ? "seat" : "seats"}</span>
         </div>
         <Tag label={vibeLabel} />
+        <Tag
+          label={ride.pickupFlexibility === "flexible" ? "Flexible" : "Fixed"}
+          variant={ride.pickupFlexibility === "flexible" ? "success" : "default"}
+        />
       </div>
 
       {/* Social hint */}

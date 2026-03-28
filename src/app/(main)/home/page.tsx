@@ -3,9 +3,10 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
-import { getRides, getEvents } from "@/lib/db";
-import { Ride, CommunityEvent } from "@/types";
-import RideCard, { computeSocialHint } from "@/components/ride/RideCard";
+import { getRides, getEvents, getUserRides, getUserById } from "@/lib/db";
+import { computeSocialHint } from "@/lib/social";
+import { Ride, CommunityEvent, User } from "@/types";
+import RideCard from "@/components/ride/RideCard";
 import EventCard from "@/components/events/EventCard";
 import Button from "@/components/ui/Button";
 import EmptyState from "@/components/ui/EmptyState";
@@ -21,26 +22,46 @@ function getGreeting(name: string): string {
 export default function HomePage() {
   const router = useRouter();
   const { user } = useAuth();
-  const [rides, setRides] = useState<Ride[]>([]);
+  const [myRides, setMyRides] = useState<Ride[]>([]);
+  const [nearbyRides, setNearbyRides] = useState<Ride[]>([]);
+  const [driverMap, setDriverMap] = useState<Map<string, User>>(new Map());
   const [events, setEvents] = useState<CommunityEvent[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!user) return;
+
     async function load() {
-      const [ridesData, eventsData] = await Promise.all([
+      const [allRides, myRidesData, eventsData] = await Promise.all([
         getRides({}),
+        getUserRides(user!.id),
         getEvents(),
       ]);
-      setRides(
-        ridesData
-          .filter((r) => r.driverId !== user?.id)
-          .slice(0, 5)
+
+      const nearby = allRides
+        .filter((r) => r.driverId !== user!.id)
+        .slice(0, 5);
+
+      // Fetch full driver User objects for social hints
+      const uniqueDriverIds = Array.from(new Set(nearby.map((r) => r.driverId)));
+      const driverUsers = await Promise.all(
+        uniqueDriverIds.map((id) => getUserById(id))
       );
+      const map = new Map<string, User>();
+      uniqueDriverIds.forEach((id, i) => {
+        const u = driverUsers[i];
+        if (u) map.set(id, u);
+      });
+
+      setMyRides(myRidesData.slice(0, 3));
+      setNearbyRides(nearby);
+      setDriverMap(map);
       setEvents(eventsData.slice(0, 2));
       setLoading(false);
     }
+
     load();
-  }, [user?.id]);
+  }, [user]);
 
   return (
     <div className="px-4 py-5 pb-8">
@@ -68,25 +89,53 @@ export default function HomePage() {
         </Button>
       </div>
 
-      {/* Upcoming rides */}
+      {/* Your rides */}
+      {myRides.length > 0 && (
+        <section className="mb-8">
+          <h2 className="text-base font-semibold text-text-primary mb-3">
+            Your rides
+          </h2>
+          <div className="flex flex-col gap-3">
+            {myRides.map((ride) => (
+              <RideCard
+                key={ride.id}
+                ride={ride}
+                onClick={() => router.push(`/ride/${ride.id}`)}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Nearby rides */}
       <section className="mb-8">
         <h2 className="text-base font-semibold text-text-primary mb-3">
-          Upcoming rides
+          Nearby rides
         </h2>
         {loading ? (
           <div className="flex justify-center py-8">
             <div className="w-6 h-6 border-2 border-brand border-t-transparent rounded-full animate-spin" />
           </div>
-        ) : rides.length > 0 ? (
+        ) : nearbyRides.length > 0 ? (
           <div className="flex flex-col gap-3">
-            {rides.map((ride) => (
-              <RideCard
-                key={ride.id}
-                ride={ride}
-                socialHint={computeSocialHint(ride, user ?? undefined)}
-                onClick={() => router.push(`/ride/${ride.id}`)}
-              />
-            ))}
+            {nearbyRides.map((ride) => {
+              const driver = driverMap.get(ride.driverId);
+              const hint =
+                driver && user
+                  ? computeSocialHint(
+                      { id: driver.id, major: driver.major, interests: driver.interests, clubs: driver.clubs },
+                      user
+                    )
+                  : undefined;
+              return (
+                <RideCard
+                  key={ride.id}
+                  ride={ride}
+                  socialHint={hint ?? undefined}
+                  onClick={() => router.push(`/ride/${ride.id}`)}
+                />
+              );
+            })}
           </div>
         ) : (
           <EmptyState
