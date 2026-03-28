@@ -23,37 +23,29 @@ export function computeSocialHint(
 ): string | null {
   if (driver.id === currentUser.id) return null;
 
-  const parts: string[] = [];
+  const study = driver.major === currentUser.major ? driver.major : null;
 
-  if (driver.major === currentUser.major) {
-    parts.push(`study ${driver.major}`);
-  }
+  const sharedInterest =
+    driver.interests.find((i) => currentUser.interests.includes(i)) ?? null;
 
-  const sharedInterests = driver.interests.filter((i) =>
-    currentUser.interests.includes(i)
-  );
-  if (sharedInterests.length > 0) {
-    parts.push(`like ${sharedInterests[0]}`);
-  }
+  const sharedClub =
+    driver.clubs.find((c) => currentUser.clubs.includes(c)) ?? null;
 
-  const sharedClubs = driver.clubs.filter((c) =>
-    currentUser.clubs.includes(c)
-  );
-  if (sharedClubs.length > 0) {
-    parts.push(`are in ${sharedClubs[0]}`);
-  }
+  // Explicit templates for all 7 non-empty combinations — no ambiguous verb assembly
+  if (study && sharedInterest && sharedClub)
+    return `You both study ${study}, like ${sharedInterest}, and are in ${sharedClub}`;
+  if (study && sharedInterest)
+    return `You both study ${study} and like ${sharedInterest}`;
+  if (study && sharedClub)
+    return `You both study ${study} and are in ${sharedClub}`;
+  if (sharedInterest && sharedClub)
+    return `You both like ${sharedInterest} and are in ${sharedClub}`;
+  if (study)
+    return `You both study ${study}`;
+  if (sharedInterest)
+    return `You both like ${sharedInterest}`;
+  if (sharedClub)
+    return `You're both in ${sharedClub}`;
 
-  if (parts.length === 0) return null;
-
-  // Single match — special phrasing for club-only
-  if (parts.length === 1) {
-    return parts[0].startsWith("are in")
-      ? `You're both ${parts[0]}`
-      : `You both ${parts[0]}`;
-  }
-
-  // Multiple matches: "You both study X, like Y, and are in Z"
-  const last = parts[parts.length - 1];
-  const rest = parts.slice(0, -1);
-  return `You both ${rest.join(", ")}, and ${last}`;
+  return null;
 }

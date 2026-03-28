@@ -27,38 +27,44 @@ export default function HomePage() {
   const [driverMap, setDriverMap] = useState<Map<string, User>>(new Map());
   const [events, setEvents] = useState<CommunityEvent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
     const currentUser = user;
 
     async function load() {
-      const [allRides, myRidesData, eventsData] = await Promise.all([
-        getRides({}),
-        getUserRides(currentUser.id),
-        getEvents(),
-      ]);
+      try {
+        const [allRides, myRidesData, eventsData] = await Promise.all([
+          getRides({}),
+          getUserRides(currentUser.id),
+          getEvents(),
+        ]);
 
-      const nearby = allRides
-        .filter((r) => r.driverId !== currentUser.id)
-        .slice(0, 5);
+        const nearby = allRides
+          .filter((r) => r.driverId !== currentUser.id)
+          .slice(0, 5);
 
-      // Fetch full driver User objects for social hints
-      const uniqueDriverIds = Array.from(new Set(nearby.map((r) => r.driverId)));
-      const driverUsers = await Promise.all(
-        uniqueDriverIds.map((id) => getUserById(id))
-      );
-      const map = new Map<string, User>();
-      uniqueDriverIds.forEach((id, i) => {
-        const u = driverUsers[i];
-        if (u) map.set(id, u);
-      });
+        // Fetch full driver User objects for social hints
+        const uniqueDriverIds = Array.from(new Set(nearby.map((r) => r.driverId)));
+        const driverUsers = await Promise.all(
+          uniqueDriverIds.map((id) => getUserById(id))
+        );
+        const map = new Map<string, User>();
+        uniqueDriverIds.forEach((id, i) => {
+          const u = driverUsers[i];
+          if (u) map.set(id, u);
+        });
 
-      setMyRides(myRidesData.slice(0, 3));
-      setNearbyRides(nearby);
-      setDriverMap(map);
-      setEvents(eventsData.slice(0, 2));
-      setLoading(false);
+        setMyRides(myRidesData.slice(0, 3));
+        setNearbyRides(nearby);
+        setDriverMap(map);
+        setEvents(eventsData.slice(0, 2));
+      } catch {
+        setError("Could not load rides. Please try again.");
+      } finally {
+        setLoading(false);
+      }
     }
 
     load();
@@ -75,6 +81,13 @@ export default function HomePage() {
           Where are you headed today?
         </p>
       </div>
+
+      {/* Error banner */}
+      {error && (
+        <p className="text-error text-sm bg-red-50 border border-red-200 rounded-lg px-3 py-2 mb-4">
+          {error}
+        </p>
+      )}
 
       {/* Primary CTAs */}
       <div className="grid grid-cols-2 gap-3 mb-8">
