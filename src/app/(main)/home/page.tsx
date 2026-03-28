@@ -28,10 +28,15 @@ export default function HomePage() {
   const [events, setEvents] = useState<CommunityEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
     if (!user) return;
     const currentUser = user;
+
+    // Clear stale state from any previous session or attempt
+    setError(null);
+    setLoading(true);
 
     async function load() {
       try {
@@ -68,7 +73,7 @@ export default function HomePage() {
     }
 
     load();
-  }, [user]);
+  }, [user, retryCount]);
 
   return (
     <div className="px-4 py-5 pb-8">
@@ -81,13 +86,6 @@ export default function HomePage() {
           Where are you headed today?
         </p>
       </div>
-
-      {/* Error banner */}
-      {error && (
-        <p className="text-error text-sm bg-red-50 border border-red-200 rounded-lg px-3 py-2 mb-4">
-          {error}
-        </p>
-      )}
 
       {/* Primary CTAs */}
       <div className="grid grid-cols-2 gap-3 mb-8">
@@ -129,6 +127,13 @@ export default function HomePage() {
         {loading ? (
           <div className="flex justify-center py-8">
             <div className="w-6 h-6 border-2 border-brand border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : error ? (
+          <div className="flex flex-col items-center py-8 gap-3">
+            <p className="text-sm text-text-secondary text-center">{error}</p>
+            <Button size="sm" variant="secondary" onClick={() => setRetryCount((c) => c + 1)}>
+              Try again
+            </Button>
           </div>
         ) : nearbyRides.length > 0 ? (
           <div className="flex flex-col gap-3">
