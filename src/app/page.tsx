@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 
 function useScrollReveal() {
   const ref = useRef<HTMLDivElement>(null);
@@ -44,6 +45,7 @@ function NavBar() {
           <a href="#features" className="hover:text-white transition-colors duration-300">Features</a>
           <a href="#how-it-works" className="hover:text-white transition-colors duration-300">How it works</a>
           <a href="#about" className="hover:text-white transition-colors duration-300">About</a>
+          <a href="#team" className="hover:text-white transition-colors duration-300">Team</a>
           <a href="#contact" className="hover:text-white transition-colors duration-300">Contact</a>
         </div>
 
@@ -352,6 +354,100 @@ function AboutSection() {
   );
 }
 
+function TeamAvatar({ src, initial, name }: { src: string; initial: string; name: string }) {
+  const [error, setError] = useState(false);
+
+  if (!src || error) {
+    return (
+      <div className="w-20 h-20 bg-brand rounded-full flex items-center justify-center mx-auto mb-4">
+        <span className="text-3xl text-white font-bold">{initial}</span>
+      </div>
+    );
+  }
+
+  return (
+    <Image
+      src={src}
+      alt={name}
+      width={80}
+      height={80}
+      className="w-20 h-20 rounded-full object-cover mx-auto mb-4"
+      onError={() => setError(true)}
+    />
+  );
+}
+
+function TeamSection() {
+  const team = [
+    {
+      initial: "B",
+      name: "Belén Franco",
+      role: "Co-Founder | Strategy & Operations",
+      description:
+        "Business-oriented Industrial Engineer with experience in strategy, operations, and project development. Belén focuses on understanding the full context to identify growth opportunities and execute high-impact initiatives. With a pragmatic and holistic perspective, she bridges strategy with implementation, ensuring ideas translate into concrete results.",
+      photoUrl: "/team/belen.jpg",
+    },
+    {
+      initial: "F",
+      name: "Florencia Grimaldi",
+      role: "Co-Founder | Supply Chain & Data",
+      description:
+        "Industrial Engineer with experience in global e-commerce, working at the intersection of data, operations, and business. Florencia combines quantitative analysis with operational insight to turn information into actionable decisions. Focused on supply chain, costs, and performance, she ensures end-to-end visibility and identifies optimization opportunities.",
+      photoUrl: "/team/florencia.jpg",
+    },
+    {
+      initial: "T",
+      name: "Tomás Latorre",
+      role: "Co-Founder | Data Engineering",
+      description:
+        "Data Engineer with experience in designing robust data pipelines, ETL optimization, and scalable data architectures. Proficient in Python, SQL, dBT, BigQuery, and Azure. Tomás brings a strong foundation in data modeling, quality, and governance — turning raw data into reliable infrastructure that powers decisions.",
+      photoUrl: "/team/tomas.jpg",
+    },
+    {
+      initial: "N",
+      name: "Nicolás González Vedoya",
+      role: "Co-Founder | Finance",
+      description:
+        "Business Economics graduate and Master's in Finance candidate at UTDT. Nicolás brings expertise in financial modeling and digital payments, ensuring OpenSeat's business model is sound and scalable. His analytical rigor and fintech background drive the project's financial strategy.",
+      photoUrl: "/team/nicolas.jpg",
+    },
+  ];
+
+  const ref = useScrollReveal();
+
+  return (
+    <section id="team" className="py-24 bg-surface-secondary">
+      <div ref={ref} className="reveal-section max-w-6xl mx-auto px-6">
+        <div className="text-center mb-16">
+          <p className="text-brand font-semibold text-sm uppercase tracking-wider mb-3">Team</p>
+          <h2 className="text-3xl sm:text-4xl font-bold text-text-primary">
+            The people behind OpenSeat
+          </h2>
+          <p className="text-text-secondary mt-4 max-w-xl mx-auto">
+            The team building the infrastructure for campus mobility
+          </p>
+        </div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
+          {team.map((member) => (
+            <div
+              key={member.name}
+              className="bg-surface-primary border border-border rounded-card p-6 text-center hover:shadow-[0_8px_30px_rgba(13,148,136,0.15)] hover:border-brand/20 hover:-translate-y-1 transition-all duration-300 flex flex-col"
+            >
+              <TeamAvatar src={member.photoUrl} initial={member.initial} name={member.name} />
+              <h3 className="font-bold text-text-primary text-lg">{member.name}</h3>
+              <p className="text-brand text-sm font-medium mt-1 min-h-[20px]">{member.role}</p>
+              <p className="text-text-secondary text-sm mt-4 leading-relaxed flex-1">
+                {member.description}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function ContactSection() {
   const ref = useScrollReveal();
 
@@ -463,6 +559,7 @@ function Footer() {
             <a href="#features" className="hover:text-gray-300 transition-colors">Features</a>
             <a href="#how-it-works" className="hover:text-gray-300 transition-colors">How it works</a>
             <a href="#about" className="hover:text-gray-300 transition-colors">About</a>
+            <a href="#team" className="hover:text-gray-300 transition-colors">Team</a>
             <a href="#contact" className="hover:text-gray-300 transition-colors">Contact</a>
           </div>
 
@@ -484,6 +581,7 @@ export default function LandingPage() {
       <HowItWorksSection />
       <CommunitySection />
       <AboutSection />
+      <TeamSection />
       <ContactSection />
       <CtaSection />
       <Footer />
