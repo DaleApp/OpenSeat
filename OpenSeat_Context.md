@@ -1,258 +1,225 @@
 # OpenSeat — Master Context Document
 
-> **Qué es este documento:** La fuente de verdad del proyecto. Contiene todas las decisiones tomadas, el scope del hackathon, el stack técnico, el esquema de datos, las pantallas, los componentes, la lógica de negocio, y la estructura de la demo. Todo el equipo (Nico, Tomi, Belu, Flor) y cualquier herramienta de IA (Claude Code, Cursor, Copilot) deben leer esto antes de escribir una sola línea de código.
+> **What this document is:** The single source of truth for the project. Contains every decision made, the hackathon scope, tech stack, data schema, screens, components, business logic, and demo structure. The entire team (Nico, Tomi, Belu, Flor) and any AI tool (Claude Code, Cursor, Copilot) must read this before writing a single line of code.
 
-> **Última actualización:** Marzo 2026
-
----
-
-## 1. Qué es OpenSeat
-
-OpenSeat es una web app responsive (mobile-first) de carpooling exclusiva para comunidades cerradas (universidades, clubes, empresas). Conecta a miembros verificados para compartir viajes con un enfoque central en crear vínculos sociales, no solo ahorrar costos.
-
-**Nombre:** OpenSeat
-**Tagline:** "Tu asiento libre te está esperando"
-**Concepto:** Un asiento libre en el auto de alguien de tu comunidad → lo abrís para que otro lo use → se conocen.
-
-**Diferencial vs competencia:**
-- vs BlaBlaCar: OpenSeat es comunidades cerradas verificadas, no abierto al público
-- vs Scoop: OpenSeat tiene foco social (buena onda score, badges, conexiones), no solo transporte
-- vs Waze Carpool: OpenSeat tiene verificación institucional y punto de encuentro inteligente
-- Ninguna app combina: comunidad cerrada + verificación institucional + foco social + punto de encuentro flexible
+> **Last updated:** March 2026
 
 ---
 
-## 2. Contexto del hackathon
+## 1. What is OpenSeat
 
-- **Formato:** Hackathon de 1 día (sábado completo + noche)
-- **Demo:** Domingo a la mañana, desde un celular mostrando la web app
-- **Presentación:** Una persona habla y muestra la app en su celular simultáneamente
-- **Equipo:** 4 personas — Nico (backend/infra), Tomi (data/Firestore), Belu (UI/páginas), Flor (diseño/visual)
-- **Plataforma:** Web app responsive mobile-first (NO app nativa)
+OpenSeat is a responsive (mobile-first) web app for carpooling exclusive to closed communities (universities, clubs, companies). It connects verified members to share rides with a focus on building social connections — not just saving costs.
+
+**Name:** OpenSeat
+**Tagline:** "Your open seat is waiting"
+**Concept:** An empty seat in someone's car from your community — you open it for someone else — you meet.
+
+---
+
+## 2. Hackathon context
+
+- **Format:** 1-day hackathon (full Saturday + night)
+- **Demo:** Sunday morning, from a phone showing the web app
+- **Presentation:** One person talks and shows the app on their phone simultaneously
+- **Team:** 4 people — Nico (backend/infra), Tomi (data/Firestore), Belu (UI/pages), Flor (design/visual)
+- **Platform:** Responsive mobile-first web app (NOT a native app)
 - **Stack:** Next.js 14 + Tailwind CSS + TypeScript + Firebase + Google Maps
 
 ---
 
-## 3. Scope del hackathon
+## 3. Hackathon scope
 
-### Filosofía: DEMO PERFECTA > muchas features
-Un flujo completo que funcione impecable y se vea bien gana hackathons. No la cantidad de features. Todo lo que se buildee tiene que funcionar en la demo sin romperse.
+### Philosophy: PERFECT DEMO > many features
+One complete flow that works flawlessly and looks good wins hackathons. Not the number of features. Everything that gets built must work in the demo without breaking.
 
-### LO QUE SE BUILDEA (debe funcionar en la demo):
+### WHAT GETS BUILT (must work in the demo):
 
-1. **Login simple con validación de dominio** — El usuario ingresa email + password. El frontend valida que el dominio sea el permitido (ej: @utdt.edu). Sin verificación por email real (se agrega post-hackathon). Para la demo, se usan usuarios pre-seedeados.
-2. **Perfil de usuario** — Nombre, apellido, foto, carrera/departamento, barrio, intereses (tags), datos del auto (marca, modelo, color, patente) si es conductor
-3. **Publicar viaje (conductor)** — Origen y destino con autocompletado, fecha, hora, asientos, pickup (2 opciones: punto fijo / punto flexible), vibe del viaje (música/charla/tranqui)
-4. **Buscar viaje (pasajero)** — Búsqueda por destino + hora, resultados con cards mostrando perfil del conductor + hints sociales + ruta en mapa con pin de punto de encuentro
-5. **Solicitar viaje** — Cualquier usuario puede solicitar unirse a un viaje publicado por otro. El usuario que publicó el viaje recibe la solicitud y puede aceptar o rechazar. No hay roles fijos: el mismo usuario puede publicar un viaje y también solicitar unirse al viaje de otro.
-6. **Post-viaje funcional** — Rating mutuo (1-5 estrellas), "buena onda" score con slider de emoji, opción de "conectar" con el otro, stats (km compartidos, CO2 ahorrado)
-7. **Badges visuales** — Se muestran en el perfil. Para el hackathon son hardcodeados en seed data (la lógica automática de desbloqueo se agrega post-hackathon)
-8. **Home** — Saludo personalizado, botones "Ofrecer viaje" / "Buscar viaje", próximos viajes cerca, bottom nav
-9. **Perfil social** — Stats, badges desbloqueados, conexiones, rating promedio
-10. **Eventos de la comunidad** — Sección donde se listan próximos eventos de la organización (ej: partido de básquet, recital, charla). Cada evento tiene fecha, hora y lugar. Al entrar a un evento, el usuario puede ver: (a) viajes publicados que van hacia ese destino en ese horario, y (b) otros miembros interesados en ir. Desde ahí puede unirse a un viaje existente o publicar uno nuevo con el destino del evento precargado.
+1. **Simple login with domain validation** — User enters email + password. Frontend validates the domain is allowed (e.g., @unc.edu). No real email verification (added post-hackathon). For the demo, pre-seeded users are used.
+2. **User profile** — All fields defined in section 6 (`User` schema). Includes profile info, vibe preference, clubs, and optional car data for drivers.
+3. **Publish ride (driver)** — All fields defined in section 6 (`Ride` schema). Origin/destination with autocomplete, departure time range, seats (1-6), event name (optional), pickup model, note.
+4. **Search ride (passenger)** — Search by destination + time, results with cards showing driver profile + social hints + route on map with meeting point pin
+5. **Request ride** — Any user can request to join a ride published by another. The user who published receives the request and can accept or reject. No fixed roles: the same user can publish a ride and also request to join someone else's ride.
+6. **Post-ride** — Mutual rating (1-5 stars), "good vibes" score with emoji slider, option to "connect" with the other person, stats (km shared, CO2 saved)
+7. **Visual badges** — Shown on profile. For the hackathon they are hardcoded in seed data (automatic unlock logic added post-hackathon)
+8. **Home** — Personalized greeting, "Offer ride" / "Find ride" buttons, nearby upcoming rides, upcoming events section with EventCards, bottom nav
+9. **Social profile** — Stats, unlocked badges (BadgeGrid with locked badges in gray), connections list, average rating
+10. **Community events** — Section listing upcoming organization events (e.g., basketball game, alumni talk, concert). Each event has date, time, and location. When entering an event, the user can see: (a) published rides heading to that destination at that time, and (b) other members interested in going. From there they can join an existing ride or publish a new one with the event destination pre-loaded.
 
-### LO QUE NO SE BUILDEA (va en slides como "próximos pasos"):
+### WHAT DOES NOT GET BUILT (goes in slides as "next steps"):
 
-- Verificación real de email con código (post-hackathon)
-- Chat in-app (coordinación se hace por fuera en el hackathon)
-- Push notifications reales
-- Cálculo automático de punto de encuentro con routing API
-- Integración con Mercado Pago (se menciona como futuro)
-- Panel admin web
-- Viajes recurrentes
-- Feed de comunidad
-- Compartir ubicación en tiempo real durante el viaje
-- Lógica automática de badges (post-hackathon, se muestran hardcodeados)
-- Colección de organizations multi-tenant (post-hackathon)
-
----
-
-## 4. Modelo de usuario
-
-Un usuario NO tiene un rol fijo. El mismo usuario puede:
-- A veces ser **conductor** (ofrece viaje, tiene auto)
-- A veces ser **pasajero** (busca viaje, no lleva auto ese día)
-
-Los datos del auto se cargan una sola vez en el perfil y quedan guardados. Cuando el usuario entra al home, ve los dos botones: "Ofrecer viaje" y "Buscar viaje".
+- Real email verification with code (post-hackathon)
+- In-app chat (coordination happens outside during hackathon)
+- Real push notifications
+- Automatic meeting point calculation with routing API
+- Venmo / Zelle integration (mentioned as future)
+- Admin web panel
+- Recurring rides
+- Community feed
+- Real-time location sharing during ride
+- Automatic badge logic (post-hackathon, shown hardcoded)
+- Multi-tenant organizations collection (post-hackathon)
 
 ---
 
-## 5. Stack técnico
+## 4. User model
 
-| Capa | Tecnología | Para qué |
-|------|-----------|----------|
+A user does NOT have a fixed role. The same user can:
+- Sometimes be a **driver** (offers ride, has car)
+- Sometimes be a **passenger** (searches for ride, not driving that day)
+
+Car data is entered once in the profile and saved. When the user enters the home screen, they see both buttons: "Offer ride" and "Find ride".
+
+### Profile fields
+
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| Full name | Open text | Yes | |
+| Photo | Image upload | Yes | Profile picture (uploaded to Firebase Storage) |
+| Email | Email input | Yes | Must be @unc.edu or @email.unc.edu |
+| Address | Google Maps autocomplete | Yes | Home address for proximity matching |
+| Major | Dropdown | Yes | All UNC majors + "Other" |
+| Status | Dropdown | Yes | Student, Professor, Staff, Other |
+| Interests | Tags (multi-select) | No | Free-form tags |
+| Vibe | Radio button | No | Music lover, Chatty, Chill, Study mode, Podcast listener, Sing-along |
+| Clubs | Tags (multi-select) | No | Pre-defined UNC clubs |
+
+#### UNC Majors (dropdown options)
+Biology, Business Administration, Chemistry, Communications, Computer Science, Economics, English, Environmental Sciences, Exercise and Sport Science, History, Information Science, Journalism, Mathematics, Nursing, Philosophy, Physics, Political Science, Psychology, Public Policy, Sociology, Statistics, Other
+
+#### UNC Clubs (tag options)
+Tar Heel Esports, Carolina Club Running, UNC Surf Club, Debate Society, Entrepreneurship Club, Photography Club, Carolina for the Kids, UNC Club Soccer, Habitat for Humanity, Carolina Outdoors, Film Club, Women in CS, Club Swimming, Intramural Sports, Music Makers, Volunteer Corps
+
+#### Vibe options (radio button)
+- Music lover — "I've got the playlist ready"
+- Chatty — "Let's talk about anything"
+- Chill — "Relaxed vibes, no pressure"
+- Study mode — "Quiet ride, I need to focus"
+- Podcast listener — "Let's discover something new"
+- Sing-along — "Carpool karaoke, let's go"
+
+### Driver setup fields
+
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| Driver's license | Photo upload | Yes | Image of valid license |
+| Brand | Open text | Yes | e.g., "Toyota" |
+| Model | Open text | Yes | e.g., "Corolla" |
+| Color | Open text | Yes | e.g., "Gray" |
+| License plate | Open text | Yes | e.g., "ABC-1234" |
+
+---
+
+## 5. Tech stack
+
+| Layer | Technology | Purpose |
+|-------|-----------|---------|
 | Framework | Next.js 14 (App Router) | SSR, routing, React |
-| Estilos | Tailwind CSS | Utility-first CSS, mobile-first |
-| Lenguaje | TypeScript (strict mode) | Tipos en todo, menos bugs |
-| Auth | Firebase Authentication | Registro, login (email + password) |
-| Base de datos | Cloud Firestore | NoSQL, real-time listeners |
-| Storage | Firebase Storage | Fotos de perfil |
-| Mapas | Google Maps JavaScript API | Mapas, rutas, pins |
-| Geocoding | Google Places API | Autocompletado de direcciones |
-| Hosting | Vercel | Deploy automático desde GitHub |
-| Repo | GitHub (organización DaleApp) | Control de versiones, PRs |
+| Styles | Tailwind CSS | Utility-first CSS, mobile-first |
+| Language | TypeScript (strict mode) | Types everywhere, fewer bugs |
+| Auth | Firebase Authentication | Registration, login (email + password) |
+| Database | Cloud Firestore | NoSQL, real-time listeners |
+| Storage | Firebase Storage | Profile photos, driver's license photos |
+| Maps | Google Maps JavaScript API | Maps, routes, pins |
+| Geocoding | Google Places API | Address autocomplete |
+| Hosting | Vercel | Automatic deploy from GitHub |
+| Repo | GitHub (DaleApp org) | Version control, PRs |
 
-### Requisito previo: Google Cloud
-Google Maps requiere billing habilitado (tarjeta de crédito). El free tier da $200/mes que cubre de sobra el hackathon y desarrollo posterior. Configurar ANTES del hackathon:
-1. Crear proyecto en Google Cloud Console
-2. Habilitar Maps JavaScript API + Places API
-3. Crear API key restringida (por dominio: localhost + dominio de Vercel)
-4. Guardar en Bitwarden
+### Google Cloud prerequisite
+Google Maps requires billing enabled (credit card). The free tier gives $200/month which more than covers the hackathon and later development. Configure BEFORE the hackathon:
+1. Create project in Google Cloud Console
+2. Enable Maps JavaScript API + Places API
+3. Create restricted API key (by domain: localhost + Vercel domain)
+4. Store in Bitwarden
 
-### Por qué auth simple en vez de verificación por email
-- Firebase email verification puede fallar en la demo (emails que no llegan, spam folder, dominios institucionales bloqueados)
-- Para el hackathon: login con email + password, validación de dominio en frontend
-- Usuarios pre-seedeados para la demo → el flujo se muestra perfecto siempre
-- **Post-hackathon:** Se agrega verificación real con código por email
+### Why simple auth instead of email verification
+- Firebase email verification can fail during demo (emails not arriving, spam folder, institutional domains blocking)
+- For the hackathon: login with email + password, domain validation on frontend
+- Pre-seeded users for the demo — the flow always looks perfect
+- **Post-hackathon:** Add real verification with email code
 
-**Costos del hackathon:** $0 (todo es free tier o gratuito)
-
----
-
-## 5.1 GitHub — Setup de organización y repositorio
-
-### Por qué una organización
-El proyecto vive en una **organización de GitHub** separada de las cuentas personales de cada integrante. Los repos personales de cada uno (otros proyectos, trabajos, etc.) son completamente invisibles para el resto del equipo. Nadie puede ver, tocar, ni saber que existen.
-
-### Setup (lo hace el Owner del repo ANTES del hackathon)
-
-**Paso 1: Crear la organización**
-- GitHub > avatar (arriba a la derecha) > Your organizations > New organization
-- Plan: **Free**
-- Nombre: `DaleApp`
-- Email: el del Owner como contacto
-
-**Paso 2: Invitar al equipo**
-- Organization > People > Invite member
-- Invitar a los otros 3 integrantes con sus usernames o emails de GitHub
-- Rol: **Member** (solo el creador queda como Owner)
-
-**Paso 3: Crear el repositorio**
-- Ya creado: https://github.com/DaleApp/OpenSeat
-- Organización: `DaleApp`
-- Repo: `OpenSeat`
-
-**Paso 4: Protección de branch**
-- Repo > Settings > Branches > Add branch protection rule
-- Branch name pattern: `main`
-- Activar: **Require a pull request before merging**
-- Activar: **Require approvals** (mínimo 1)
-- Esto obliga a que nadie pueda pushear directo a main — todo pasa por PR con review
-
-**Paso 5: GitHub Projects**
-- Organization > Projects > New project > Board
-- Crear 4 columnas: **Backlog** | **Sprint** | **En Review** | **Done**
-- Crear Issues para cada tarea del hackathon y asignar a la persona correspondiente
-
-### Clonar el repo (todos)
-```bash
-git clone https://github.com/DaleApp/OpenSeat.git
-cd OpenSeat
-npm install
-cp .env.example .env.local
-# Completar .env.local con las claves de Firebase (están en Bitwarden)
-npm run dev
-# Abrir http://localhost:3000
-```
-
-### Git workflow durante el hackathon
-```bash
-# Crear branch para tu feature
-git checkout -b feature/nombre-de-la-feature
-
-# Trabajar, commitear frecuentemente
-git add .
-git commit -m "feat: descripción corta de lo que hiciste"
-
-# Pushear tu branch
-git push origin feature/nombre-de-la-feature
-
-# Crear Pull Request en GitHub → pedir review → merge
-```
-
-**Prefijos de commits:** `feat:` (nueva feature), `fix:` (bug), `style:` (visual), `refactor:` (reestructura), `docs:` (documentación)
-
-**Regla de hackathon:** Reviews rápidos. Cuando alguien abre un PR, otro del equipo lo mira en máximo 10 minutos y aprueba o comenta. No bloquear al equipo.
-
-### Accesos por persona
-
-| Herramienta | Nico (admin) | Tomi | Belu | Flor |
-|-------------|-------------|------|------|------|
-| GitHub repo | Owner | Collaborator | Collaborator | Collaborator |
-| GitHub Projects | Admin | Write | Write | Write |
-| Firebase console | Admin | — | — | — |
-| Vercel | Admin | — | — | — |
-| Slack | Admin | Member | Member | Member |
-| Bitwarden vault | Admin | Member | Member | Member |
-
-### Gestión de secretos
-Las API keys y credenciales se comparten via **Bitwarden** (password manager, gratis). NUNCA por WhatsApp, email, ni Slack. Nico crea el vault "OpenSeat - Dev" e invita al equipo. Cada uno copia las claves a su `.env.local`.
+**Hackathon costs:** $0 (everything is free tier or free)
 
 ---
 
-## 6. Esquema de Firestore
+## 5.1 GitHub — Organization and repository setup
 
-### Estrategia: empezar simple, crecer después
-Para el hackathon se usa un schema simplificado. No hay colección `organizations` (UTDT está hardcodeada). Los ratings se embeben en el ride. Los badges son datos estáticos en el seed. Post-hackathon se escala al schema completo.
+> Full setup instructions (org creation, branch protection, git workflow, access table, secrets) are in **[GITHUB_SETUP.md](GITHUB_SETUP.md)**.
+>
+> **Key facts:** Org `DaleApp`, repo `OpenSeat`, branch protection on `main` (1 approval required), secrets via Bitwarden.
 
-### Colección: `users`
+---
+
+## 6. Firestore schema
+
+### Strategy: start simple, grow later
+For the hackathon a simplified schema is used. No `organizations` collection (UNC is hardcoded). Ratings are embedded in the ride. Badges are static seed data. Post-hackathon it scales to the full schema.
+
+### Collection: `users`
 ```typescript
 interface User {
   id: string;                    // Firebase Auth UID
-  email: string;
-  name: string;
+  email: string;                 // must be @unc.edu or @email.unc.edu
+  name: string;                  // full name
   photoUrl?: string;
-  department: string;            // "MBA", "Economía", "Derecho"
-  neighborhood: string;          // "Núñez", "Belgrano", "V. López"
-  bio?: string;
-  interests: string[];           // ["fútbol", "fintech", "música"]
+  address: {                     // home address, Google Maps validated (required)
+    address: string;
+    lat: number;
+    lng: number;
+  };
+  major: string;                 // "Computer Science", "Business Administration", etc.
+  status: 'student' | 'professor' | 'staff' | 'other';
+  interests: string[];           // ["basketball", "fintech", "music"]
+  vibe: string;                  // "music_lover", "chatty", "chill", "study_mode", "podcast_listener", "sing_along"
+  clubs: string[];               // ["Tar Heel Esports", "UNC Club Soccer"]
 
-  // Datos del auto (opcionales, se cargan si alguna vez es conductor)
+  // Car data (optional, loaded if they ever drive)
   car?: {
+    driversLicenseUrl: string;   // photo of driver's license (Firebase Storage)
     brand: string;               // "Toyota"
     model: string;               // "Corolla"
-    color: string;               // "Gris"
-    licensePlate: string;        // "AB 123 CD"
+    color: string;               // "Gray"
+    licensePlate: string;        // "ABC-1234"
   };
 
-  // Stats
+  // Stats (stored in metric internally; UI converts to miles for display)
   stats: {
     totalRides: number;
-    totalKm: number;
-    co2Saved: number;            // en kg
+    totalKm: number;             // stored in km, displayed as miles (km * 0.621)
+    co2Saved: number;            // in kg
     peopleConnected: number;
     averageRating: number;       // 1-5
-    averageBuenaOnda: number;    // 1-5
+    averageGoodVibes: number;    // 1-5
     totalRatings: number;
   };
 
-  // Badges desbloqueados (hardcodeados en seed para el hackathon)
+  // Unlocked badges (hardcoded in seed for hackathon)
   badges: Badge[];
 
-  // Conexiones (user IDs de personas con las que eligió "conectar")
+  // Connections (user IDs of people they chose to "connect" with)
   connections: string[];
 
   createdAt: Timestamp;
 }
 
 interface Badge {
-  id: string;                    // "rompehielo", "puntual", "eco-hero"
-  name: string;                  // "Rompehielo"
-  description: string;           // "Primer viaje con alguien nuevo"
-  icon: string;                  // emoji o ícono
+  id: string;                    // "icebreaker", "punctual", "eco-hero"
+  name: string;                  // "Icebreaker"
+  description: string;           // "First ride with someone new"
+  icon: string;                  // emoji or icon
   unlockedAt: Timestamp;
 }
 ```
 
-### Colección: `rides`
+### Collection: `rides`
 ```typescript
 interface Ride {
   id: string;
   driverId: string;
   driverName: string;            // denormalized
   driverPhotoUrl?: string;       // denormalized
-  driverDepartment: string;      // denormalized
+  driverMajor: string;           // denormalized
   driverRating: number;          // denormalized
+  driverVibe: string;            // denormalized from user profile
   driverCar: {                   // denormalized
     brand: string;
     model: string;
@@ -271,14 +238,14 @@ interface Ride {
     lng: number;
   };
 
-  date: string;                  // "2026-04-05" (YYYY-MM-DD)
-  departureTime: string;         // "08:30"
+  departureTimeStart: string;    // "2026-04-05T08:00" (ISO datetime)
+  departureTimeEnd: string;      // "2026-04-05T08:30" (ISO datetime, end of range)
 
-  totalSeats: number;            // 1-4
+  totalSeats: number;            // 1-6
   availableSeats: number;
 
   pickupFlexibility: 'fixed' | 'flexible';
-  flexibleRadiusKm?: number;
+  flexibleRadiusMi?: number;     // 1, 2, 5, or 10 (in miles, displayed as miles)
 
   meetingPoint?: {
     address: string;
@@ -286,11 +253,8 @@ interface Ride {
     lng: number;
   };
 
-  vibe: {
-    music: boolean;
-    chat: boolean;
-    quiet: boolean;
-  };
+  eventId?: string;              // links to CommunityEvent.id (set when ride is created from event page)
+  eventName?: string;            // denormalized event name, or custom text if typed manually
 
   note?: string;
 
@@ -298,7 +262,7 @@ interface Ride {
 
   passengers: RidePassenger[];
 
-  // Ratings embebidos (simplificado para hackathon)
+  // Embedded ratings (simplified for hackathon)
   ratings: EmbeddedRating[];
 
   createdAt: Timestamp;
@@ -308,7 +272,7 @@ interface RidePassenger {
   userId: string;
   userName: string;
   userPhotoUrl?: string;
-  userDepartment: string;
+  userMajor: string;
   status: 'pending' | 'accepted' | 'rejected';
   pickupPreference: 'pickup_me' | 'i_go_to_you' | 'flexible';
   requestedAt: Timestamp;
@@ -319,287 +283,371 @@ interface EmbeddedRating {
   fromUserId: string;
   toUserId: string;
   stars: number;                 // 1-5
-  buenaOnda: number;             // 1-5
+  goodVibes: number;             // 1-5
   wantsToConnect: boolean;
   createdAt: Timestamp;
 }
 ```
 
-### Post-hackathon: schema expandido
-- Agregar colección `organizations` con `allowedDomains`, `verificationMethod`, etc.
-- Mover ratings a colección separada `ratings` con dimensiones (puntualidad, conducción)
-- Agregar lógica automática de badges
-- Agregar campo `organizationId` a users
+### Collection: `events`
+```typescript
+interface CommunityEvent {
+  id: string;
+  name: string;                  // "UNC vs Duke Basketball"
+  description?: string;
+  date: string;                  // "2026-04-05"
+  time: string;                  // "19:00"
+  location: {
+    address: string;
+    lat: number;
+    lng: number;
+  };
+  interestedUsers: string[];     // user IDs
+  imageUrl?: string;
+  createdAt: Timestamp;
+}
+```
+
+### Post-hackathon: expanded schema
+- Add `organizations` collection with `allowedDomains`, `verificationMethod`, etc.
+- Move ratings to separate `ratings` collection with dimensions (punctuality, driving)
+- Add automatic badge logic
+- Add `organizationId` field to users
 
 ---
 
-## 7. Páginas y rutas (Next.js App Router)
+## 7. Pages and routes (Next.js App Router)
 
 ```
-app/
+src/app/
 ├── (auth)/
-│   ├── login/page.tsx              → Login con email + password
-│   └── register/page.tsx           → Registro: email (valida dominio) → password → perfil
+│   ├── layout.tsx                  → Centered, no nav, max-w-sm
+│   ├── login/page.tsx              → Login with email + password
+│   └── register/page.tsx           → Register: email (validate domain) → password → profile
 │
 ├── (main)/
-│   ├── home/page.tsx               → Home: saludo, 2 botones, viajes cercanos
+│   ├── layout.tsx                  → TopBar + BottomNav + padding bottom
+│   ├── home/page.tsx               → Home: greeting, 2 buttons, nearby rides, upcoming events
 │   ├── ride/
-│   │   ├── new/page.tsx            → Ofrecer viaje (formulario completo)
-│   │   ├── search/page.tsx         → Buscar viaje (búsqueda + resultados)
-│   │   └── [id]/page.tsx           → Detalle del viaje (mapa, conductor, solicitar)
-│   ├── ride/[id]/rate/page.tsx     → Post-viaje: rating + buena onda + conectar
-│   ├── profile/page.tsx            → Mi perfil: stats, badges, conexiones, datos auto
-│   └── profile/[id]/page.tsx       → Perfil de otro usuario
+│   │   ├── new/page.tsx            → Offer ride (full form, pre-loads destination if from event)
+│   │   ├── search/page.tsx         → Search ride (search + results with SocialHints)
+│   │   └── [id]/page.tsx           → Ride detail (map, driver info, request button)
+│   ├── ride/[id]/rate/page.tsx     → Post-ride: rating + good vibes + connect
+│   ├── events/page.tsx             → List of upcoming community events
+│   ├── events/[id]/page.tsx        → Event detail: rides available + publish ride for event
+│   ├── profile/page.tsx            → My profile: stats, badges, connections, car data
+│   └── profile/[id]/page.tsx       → Other user's profile
 │
-├── layout.tsx                      → Layout principal con bottom nav
-└── globals.css                     → Tailwind imports + CSS custom
+├── layout.tsx                      → Root layout
+└── globals.css                     → Tailwind imports + custom CSS
 ```
-
-Nota: Se eliminó `register/car/page.tsx` como página separada. Los datos del auto se cargan desde el perfil o cuando el usuario intenta ofrecer su primer viaje.
 
 ---
 
-## 8. Componentes principales
+## 8. Main components
 
 ### Layout
-- `BottomNav` — Navegación inferior mobile: Home, Buscar, Mis viajes, Perfil
-- `TopBar` — Barra superior con logo OpenSeat + avatar usuario
+- `BottomNav` — Bottom mobile navigation: Home, Search, My Rides, Profile (4 tabs, 64px height)
+- `TopBar` — Top bar with OpenSeat logo + user avatar
 
 ### Auth
-- `ProfileForm` — Formulario de perfil (nombre, foto, carrera, barrio, intereses)
-- `CarForm` — Formulario de datos del auto (marca, modelo, color, patente)
+- `ProfileForm` — Profile form with all `User` fields from section 6 schema
+- `VibeSelector` — Radio buttons for vibe preference: music lover / chatty / chill / study mode / podcast / sing-along (used in ProfileForm)
+- `CarForm` — Car data form with all `User.car` fields from section 6 schema
 
 ### Ride
-- `RideForm` — Formulario para ofrecer viaje (origen, destino, hora, asientos, pickup, vibe)
-- `RideCard` — Card de resultado de búsqueda (foto conductor, carrera, rating, hora, asientos, vibe, hints sociales)
-- `RideDetail` — Vista completa del viaje con mapa, info del conductor, botón solicitar
-- `RideMap` — Mapa Google Maps con pins de origen, destino y punto de encuentro
-- `PickupSelector` — Selector de 2 opciones: punto fijo / punto flexible. 
-  Si se elige "flexible", aparece un segundo selector de radio: 1, 2, 5, 10 km.
-- `VibeSelector` — Selector de vibe: música / charla / tranqui (toggle pills)
-- `SeatSelector` — Selector de 1-4 asientos
-- `PassengerRequest` — Card de solicitud pendiente (para el conductor: aceptar/rechazar)
-- `AddressInput` — Input con autocompletado via Google Places API
+- `RideForm` — Form to offer a ride with all `Ride` fields from section 6 schema
+- `RideCard` — Search result card (driver photo, major, rating, time, seats, driver's vibe from profile, social hints)
+- `RideDetail` — Full ride view with map, driver info, request button
+- `RideMap` — Google Maps with pins for origin, destination, and meeting point
+- `AddressInput` — Input with Google Places API autocomplete
+- `PickupSelector` — 2 options: fixed point / flexible point. If "flexible", shows radius selector: 1, 2, 5, 10 miles
+- `SeatSelector` — Selector for 1-6 seats
+- `PassengerRequest` — Pending request card (for driver: accept/reject)
+
+### Events
+- `EventCard` — Event card (name, date, location, interested count)
+- `EventRideList` — List of available rides for a specific event
 
 ### Social
-- `RatingForm` — Estrellas + slider buena onda + botón conectar
-- `BuenaOndaSlider` — Slider con emojis (😐 → 🤩)
-- `BadgeCard` — Badge individual con ícono, nombre, descripción
-- `BadgeGrid` — Grid de todos los badges (desbloqueados + bloqueados)
-- `StatsCard` — Card con stat individual (km, CO2, personas, viajes)
-- `ConnectionsList` — Lista de personas con las que conectaste
-- `SocialHint` — "Ambos estudian MBA y les gusta el fútbol" (en los resultados de búsqueda)
+- `RatingForm` — Stars + good vibes slider + connect button
+- `GoodVibesSlider` — Slider with emojis (😐 → 🤩)
+- `BadgeCard` — Individual badge with icon, name, description
+- `BadgeGrid` — Grid of all badges (unlocked + locked in gray)
+- `StatsCard` — Individual stat card (miles, CO2, people, rides)
+- `ConnectionsList` — List of people you've connected with
+- `SocialHint` — "You both study CS and like basketball" (in search results)
 
-### UI (reutilizables)
-- `Button` — Botón primario (teal) y secundario (outline)
-- `Input` — Input con label y error
-- `Tag` — Pill de interés (seleccionable/deseleccionable)
-- `Avatar` — Foto de perfil circular con fallback de iniciales
-- `Card` — Container con borde y padding
-- `EmptyState` — Mensaje cuando no hay resultados
-
----
-
-## 9. Lógica de negocio
-
-### Auth (simplificado para hackathon)
-```
-1. Usuario ingresa email + password
-2. Frontend extrae dominio del email (ej: "utdt.edu" o "mail.utdt.edu")
-3. Chequea si dominio está en lista hardcodeada: ["utdt.edu", "mail.utdt.edu"]
-4. Si sí → crea cuenta en Firebase Auth (email + password)
-5. Si no → muestra error "Este email no pertenece a UTDT"
-6. Redirige a completar perfil
-7. Para la demo: usuarios ya seedeados, se loguean directo
-```
-
-**Post-hackathon:** Agregar verificación real con código por email, colección `organizations` con dominios configurables por org.
-
-### Publicar viaje
-```
-1. Conductor ingresa origen (AddressInput con autocompletado Google Places)
-2. Ingresa destino (AddressInput con autocompletado Google Places)
-3. Selecciona fecha y hora
-4. Selecciona asientos (1-4)
-5. Selecciona pickup:
-   - "Punto fijo" → no pide nada más
-   - "Punto flexible" → aparece selector de radio: 1, 2, 5, 10 km
-     (se guarda en flexibleRadiusKm)
-6. Selecciona vibe: música / charla / tranqui
-7. Nota opcional
-8. Publica → se crea doc en Firestore con status "active"
-9. Si no tiene datos del auto cargados → redirige a cargar auto primero
-```
-
-### Buscar viaje
-```
-1. Pasajero ingresa destino + fecha + hora aproximada
-2. Query a Firestore: rides donde date coincide, status = "active", availableSeats > 0
-3. Filtrar/ordenar en frontend por cercanía geográfica (cálculo simple de distancia)
-4. Mostrar resultados como cards con:
-   - Foto, nombre, carrera, rating del conductor
-   - Hora, asientos disponibles
-   - Pickup flexibility (badge: "Punto fijo" o "Flexible")
-   - Vibe tags
-   - Social hint (intereses en común)
-5. Al tocar una card → detalle del viaje con mapa
-```
-
-### Solicitar viaje
-```
-1. Pasajero ve detalle del viaje con mapa y ruta
-2. Selecciona su preferencia de pickup: "que me busquen" / "voy yo" / "flexible"
-3. Toca "Solicitar viaje"
-4. Se agrega como passenger en el doc del ride con status "pending"
-5. Conductor ve la solicitud en su pantalla
-6. Conductor acepta → status cambia a "accepted", availableSeats se decrementa
-7. Conductor rechaza → status cambia a "rejected"
-```
-
-### Post-viaje (rating)
-```
-1. Cuando el conductor marca el viaje como "completed"
-2. Cada participante ve pantalla de rating:
-   a. Estrellas (1-5)
-   b. "¿Qué tan buena onda fue?" → slider de emoji (😐😊😄🤩) = 1-5
-   c. "¿Conectar con [nombre]?" → Sí / Ahora no
-3. Se guarda embebido en el ride (array ratings)
-4. Se actualiza stats del usuario rated (averageRating, averageBuenaOnda)
-5. Si ambos eligieron "conectar" → se agregan mutuamente a connections
-```
-
-### Badges (hardcodeados para hackathon)
-```
-Para la demo, los badges se cargan en el seed data de los usuarios.
-Badges disponibles:
-- "Rompehielo": Primer viaje con alguien nuevo
-- "Puntual": Siempre a tiempo
-- "Eco-hero": Ahorró más de 50 kg CO2
-- "Explorador/a": Viajó con gente de 5 departamentos distintos
-- "Comunidad": Conectado con 20+ personas
-
-Post-hackathon: lógica automática que chequea después de cada viaje completado.
-```
-
-### Cálculo de CO2 ahorrado
-```
-Fórmula simplificada:
-co2Saved = distanciaKm * 0.21 (kg CO2 por km promedio de un auto)
-
-Si 2 personas comparten un viaje de 15km:
-- Sin carpooling: 2 autos × 15km × 0.21 = 6.3 kg CO2
-- Con carpooling: 1 auto × 15km × 0.21 = 3.15 kg CO2
-- Ahorro por persona: 3.15 / 2 = 1.575 kg CO2
-```
-
-### Social hints (intereses en común)
-```
-Al mostrar resultados de búsqueda:
-1. Comparar interests[] del pasajero con interests[] del conductor
-2. Comparar department del pasajero con department del conductor
-3. Si hay match → mostrar "Ambos estudian [dept] y les gusta [interés]"
-4. Si no hay match de intereses → mostrar solo info básica
-```
+### UI (reusable)
+- `Button` — Primary (teal) and secondary (outline) button
+- `Input` — Input with label and error
+- `Tag` — Interest pill (selectable/deselectable)
+- `Avatar` — Circular profile photo with initials fallback
+- `Card` — Container with border and padding
+- `EmptyState` — Message when no results
 
 ---
 
-## 10. Design system (para Flor y todo el equipo)
+## 9. Business logic
 
-### Colores
+### Auth (simplified for hackathon)
+```
+1. User enters email + password
+2. Frontend extracts email domain (e.g., "unc.edu" or "email.unc.edu")
+3. Checks if domain is in hardcoded list: ["unc.edu", "email.unc.edu"]
+4. If yes → creates account in Firebase Auth (email + password)
+5. If no → shows error "This email doesn't belong to UNC"
+6. Redirects to complete profile
+7. For the demo: pre-seeded users, they log in directly
+```
+
+**Post-hackathon:** Add real verification with email code, `organizations` collection with configurable domains per org.
+
+### Publish ride
+```
+1. If no car data loaded → redirects to CarForm first (check BEFORE showing form)
+2. Driver enters origin (AddressInput with Google Places autocomplete)
+3. Enters destination (AddressInput with Google Places autocomplete)
+4. Selects departure time range (start and end time)
+5. Selects available seats (1-6) via SeatSelector
+6. Optionally enters event name (pre-loaded if coming from event page)
+7. Selects pickup model:
+   - "Fixed point" → no further input
+   - "Flexible point" → radius selector appears: 1, 2, 5, 10 miles
+     (saved in flexibleRadiusMi)
+8. Optional note
+9. Publishes → creates doc in Firestore with status "active"
+```
+
+### Search ride
+```
+1. Passenger enters destination + date + approximate time
+2. Query Firestore: rides where date matches, status = "active", availableSeats > 0
+3. Filter/sort on frontend by geographic proximity (simple distance calculation)
+4. Show results as cards with:
+   - Photo, name, major, rating of driver
+   - Time, available seats
+   - Pickup flexibility (badge: "Fixed" or "Flexible")
+   - Vibe tag
+   - Social hint (shared interests, same major, same club)
+5. Tapping a card → ride detail with map
+```
+
+### Request ride
+```
+1. Passenger sees ride detail with map and route
+2. Selects pickup preference: "pick me up" / "I'll go to you" / "flexible"
+3. System checks pickup compatibility between driver and passenger preferences
+4. If compatible → taps "Request ride"
+5. If not compatible → shows message explaining why
+6. Gets added as passenger in the ride doc with status "pending"
+7. Driver sees the request on their screen
+8. Driver accepts → status changes to "accepted", availableSeats decrements
+9. Driver rejects → status changes to "rejected"
+```
+
+### Post-ride (rating)
+```
+1. When the driver marks the ride as "completed"
+2. Each participant sees rating screen:
+   a. Stars (1-5)
+   b. "How were the vibes?" → emoji slider (😐😊😄🤩) = 1-5
+   c. "Connect with [name]?" → Yes / Not now
+3. Saved embedded in the ride (ratings array)
+4. Updates the rated user's stats (averageRating, averageGoodVibes)
+5. If both chose "connect" → they are mutually added to connections
+6. If badge "Icebreaker" conditions met → show badge unlock animation
+```
+
+### Badges (hardcoded for hackathon)
+```
+For the demo, badges are loaded in the seed data.
+Available badges:
+- "Icebreaker": First ride with someone new
+- "Punctual": Always on time
+- "Eco-hero": Saved more than 50 kg CO2
+- "Explorer": Rode with people from 5 different majors
+- "Community": Connected with 20+ people
+
+Post-hackathon: automatic logic that checks after each completed ride.
+
+Display: BadgeGrid shows ALL badges. Unlocked ones are full color.
+Locked ones appear grayed out with a lock icon — visually impressive.
+```
+
+### CO2 saved calculation
+```
+Simplified formula (internal calculation in km):
+co2Saved = distanceKm * 0.21 (kg CO2 per km average for a car)
+
+If 2 people share a 10-mile (16 km) ride:
+- Without carpooling: 2 cars × 16km × 0.21 = 6.72 kg CO2
+- With carpooling: 1 car × 16km × 0.21 = 3.36 kg CO2
+- Savings per person: 3.36 / 2 = 1.68 kg CO2
+
+Note: Users input/see distances in miles. Convert to km internally
+(miles * 1.609 = km). Display distances back in miles.
+```
+
+### Social hints (shared interests)
+```
+When showing search results:
+1. Compare interests[] of passenger with interests[] of driver
+2. Compare major of passenger with major of driver
+3. Compare clubs[] of passenger with clubs[] of driver
+4. If match → show "You both study [major] and like [interest]"
+   or "You're both in [club]"
+5. If no match → show only basic info
+```
+
+### Events
+```
+1. Home page shows "Upcoming Events" section with 1-2 EventCards
+2. Events page lists all upcoming community events
+3. Event detail page shows:
+   a. Event info (name, date, time, location)
+   b. Rides heading to that destination around that time
+   c. Other members interested in going
+   d. "Publish ride for this event" button (pre-loads destination + event name)
+4. When publishing a ride from an event page, destination and eventName are pre-filled
+```
+
+---
+
+## 10. Design system
+
+### Colors
 ```css
---brand-primary: #0D9488;        /* Teal - color principal */
---brand-primary-light: #E1F5EE;  /* Teal claro - backgrounds */
---brand-primary-dark: #085041;   /* Teal oscuro - texto sobre teal claro */
+--brand-primary: #0D9488;        /* Teal - main color */
+--brand-primary-light: #E1F5EE;  /* Light teal - backgrounds */
+--brand-primary-dark: #085041;   /* Dark teal - text on light teal */
 
---text-primary: #1E293B;         /* Texto principal */
---text-secondary: #64748B;       /* Texto secundario */
---text-tertiary: #94A3B8;        /* Texto hint/placeholder */
+--text-primary: #1E293B;         /* Primary text */
+--text-secondary: #64748B;       /* Secondary text */
+--text-tertiary: #94A3B8;        /* Hint/placeholder text */
 
---bg-primary: #FFFFFF;           /* Fondo principal */
---bg-secondary: #F1F5F9;         /* Fondo cards/sections */
+--bg-primary: #FFFFFF;           /* Main background */
+--bg-secondary: #F1F5F9;         /* Cards/sections background */
 
---border: #E2E8F0;               /* Bordes */
---border-focus: #0D9488;         /* Bordes en focus */
+--border: #E2E8F0;               /* Borders */
+--border-focus: #0D9488;         /* Focus borders */
 
 --success: #22C55E;
 --warning: #F59E0B;
 --error: #EF4444;
 ```
 
-### Tipografía
+### Typography
 ```
-Font: Inter (Google Fonts) o system fonts
-Títulos: 18-24px, font-weight: 600
-Subtítulos: 14-16px, font-weight: 500
+Font: Inter (Google Fonts) or system fonts
+Titles: 18-24px, font-weight: 600
+Subtitles: 14-16px, font-weight: 500
 Body: 14px, font-weight: 400
 Caption: 12px, font-weight: 400
 Tags/badges: 10-11px, font-weight: 500
 ```
 
-### Componentes clave
+### Key components
 ```
-Border radius: 8px (inputs), 12px (cards), 20px (botones pill), 50% (avatars)
-Padding cards: 12-16px
-Gap entre elementos: 8-12px
+Border radius: 8px (inputs), 12px (cards), 20px (pill buttons), 50% (avatars)
+Card padding: 12-16px
+Element gap: 8-12px
 Bottom nav height: 64px
-Safe area bottom: 16px (para iPhones con notch)
+Safe area bottom: 16px (for iPhones with notch)
 ```
 
 ### Mobile-first breakpoints
 ```css
-/* Default: mobile (< 640px) — DISEÑAR PRIMERO PARA ESTO */
+/* Default: mobile (< 640px) — DESIGN FOR THIS FIRST */
 /* sm: 640px+ (tablet) */
 /* md: 768px+ (tablet landscape) */
-/* lg: 1024px+ (desktop) — nice to have, no prioridad */
+/* lg: 1024px+ (desktop) — nice to have, not priority */
 ```
 
 ---
 
-## 11. Estrategia de mock data
+## 11. Mock data strategy
 
-### Por qué mock data desde el minuto 1
-Para que Belu y Flor puedan trabajar en UI sin esperar a que Firestore esté conectado, Tomi arranca creando `lib/mock-data.ts` con toda la data de demo. Las funciones en `lib/db.ts` arrancan devolviendo mock data y después adentro se cambian por queries reales. Misma interfaz, distinta implementación.
+### Why mock data from minute 1
+So that Belu and Flor can work on UI without waiting for Firestore to be connected, Tomi starts by creating `src/lib/mock-data.ts` with all the demo data. Functions in `src/lib/db.ts` start by returning mock data and later switch to real queries internally. Same interface, different implementation.
 
-### `lib/mock-data.ts`
+### `src/lib/mock-data.ts`
 ```typescript
-// Usuarios de ejemplo
+// Example users
 export const MOCK_USERS: User[] = [
   {
     id: "user1",
-    email: "nico@utdt.edu",
-    name: "Nico García",
+    email: "nico@unc.edu",
+    name: "Nico Garcia",
     photoUrl: "/avatars/nico.jpg",
-    department: "MBA",
-    neighborhood: "Núñez",
-    interests: ["fintech", "fútbol", "emprendimiento"],
-    car: { brand: "Toyota", model: "Corolla", color: "Gris", licensePlate: "AB 123 CD" },
-    stats: { totalRides: 24, totalKm: 312, co2Saved: 65.5, peopleConnected: 8, averageRating: 4.8, averageBuenaOnda: 4.6, totalRatings: 18 },
+    major: "Business Administration",
+    status: "student",
+    address: { address: "123 Franklin St, Chapel Hill, NC", lat: 35.9132, lng: -79.0558 },
+    interests: ["fintech", "basketball", "entrepreneurship"],
+    vibe: "chatty",
+    clubs: ["Entrepreneurship Club", "Intramural Sports"],
+    car: { driversLicenseUrl: "/licenses/nico.jpg", brand: "Toyota", model: "Corolla", color: "Gray", licensePlate: "ABC-1234" },
+    stats: { totalRides: 24, totalKm: 312, co2Saved: 65.5, peopleConnected: 8, averageRating: 4.8, averageGoodVibes: 4.6, totalRatings: 18 },
     badges: [
-      { id: "rompehielo", name: "Rompehielo", description: "Primer viaje con alguien nuevo", icon: "🧊", unlockedAt: ... },
-      { id: "eco-hero", name: "Eco-hero", description: "Ahorraste más de 50 kg CO2", icon: "🌱", unlockedAt: ... },
+      { id: "icebreaker", name: "Icebreaker", description: "First ride with someone new", icon: "🧊", unlockedAt: new Date() },
+      { id: "eco-hero", name: "Eco-hero", description: "Saved more than 50 kg CO2", icon: "🌱", unlockedAt: new Date() },
     ],
     connections: ["user2", "user3"],
-    createdAt: ...
+    createdAt: new Date()
   },
-  // ... Tomi, Belu, Flor, Usuario demo, Usuario demo 2
+  // ... Tomi, Belu, Flor, Demo user, Demo user 2
 ];
 
-// Viajes de ejemplo
+// Example rides
 export const MOCK_RIDES: Ride[] = [
-  // Nico: Núñez → UTDT, Lun 8:30, 3 asientos, flexible, música + charla
-  // Tomi: Belgrano → UTDT, Lun 9:00, 2 asientos, punto fijo, charla
-  // Demo2: San Isidro → UTDT, Lun 8:00, 3 asientos, flexible, tranqui
+  // Nico: Franklin St → UNC Campus, Mon 8:00-8:30, 3 seats, flexible, chatty
+  // Tomi: Carrboro → UNC Campus, Mon 9:00-9:15, 2 seats, fixed, chill
+  // Demo2: Durham → UNC Campus, Mon 8:00-8:30, 3 seats, flexible, study mode
+];
+
+// Example events
+export const MOCK_EVENTS: CommunityEvent[] = [
+  {
+    id: "event1",
+    name: "UNC vs Duke Basketball",
+    description: "The rivalry game of the year",
+    date: "2026-04-10",
+    time: "19:00",
+    location: { address: "Dean E. Smith Center, Chapel Hill, NC", lat: 35.9100, lng: -79.0478 },
+    interestedUsers: ["user1", "user2", "user3"],
+    createdAt: new Date()
+  },
+  {
+    id: "event2",
+    name: "CS Alumni Networking Night",
+    description: "Meet alumni working in tech",
+    date: "2026-04-12",
+    time: "18:00",
+    location: { address: "Sitterson Hall, UNC Campus", lat: 35.9105, lng: -79.0530 },
+    interestedUsers: ["user1", "user4"],
+    createdAt: new Date()
+  },
+  {
+    id: "event3",
+    name: "Spring Concert — Campus Green",
+    description: "Live music on the quad",
+    date: "2026-04-15",
+    time: "16:00",
+    location: { address: "Polk Place, UNC Campus", lat: 35.9119, lng: -79.0510 },
+    interestedUsers: ["user2", "user3", "user5"],
+    createdAt: new Date()
+  }
 ];
 ```
 
-### `lib/db.ts` — patrón de migración
+### `src/lib/db.ts` — migration pattern
 ```typescript
-// Fase 1 (hackathon): devuelve mock data
+// Phase 1 (hackathon): returns mock data
 export async function getRides(filters: RideFilters): Promise<Ride[]> {
-  return MOCK_RIDES.filter(/* filtros básicos */);
+  return MOCK_RIDES.filter(/* basic filters */);
 }
 
-// Fase 2 (post-hackathon): misma firma, query real
+// Phase 2 (post-hackathon): same signature, real query
 export async function getRides(filters: RideFilters): Promise<Ride[]> {
   const q = query(collection(db, 'rides'), where(...), orderBy(...));
   const snapshot = await getDocs(q);
@@ -607,215 +655,126 @@ export async function getRides(filters: RideFilters): Promise<Ride[]> {
 }
 ```
 
-Esto desbloquea a todo el equipo desde la hora 1.
+### Required `db.ts` functions
+```typescript
+// Users
+getUserById(id: string): Promise<User | null>
+updateUser(id: string, data: Partial<User>): Promise<void>
+getConnections(userId: string): Promise<User[]>
 
----
+// Rides
+getRides(filters: RideFilters): Promise<Ride[]>
+getRideById(id: string): Promise<Ride | null>
+createRide(data: Omit<Ride, 'id' | 'createdAt'>): Promise<string>
+requestRide(rideId: string, passenger: RidePassenger): Promise<void>
+respondToRequest(rideId: string, passengerId: string, accept: boolean): Promise<void>
+completeRide(rideId: string): Promise<void>
+addRating(rideId: string, rating: EmbeddedRating): Promise<void>
 
-## 12. Asignación de tareas por persona
-
-### Nico (backend / infra / integrations)
-- Setup del proyecto: Next.js + Tailwind + Firebase + GitHub
-- Firebase Auth: registro y login con email + password, validación de dominio
-- Google Maps: componente de mapa con pins, autocompletado Places
-- Home page: saludo, botones, viajes cercanos
-- Seed data / mock data para la demo
-- Deploy en Vercel
-- CLAUDE.md en el repo para herramientas de IA
-
-### Tomi (data / Firestore / lógica)
-- `lib/mock-data.ts` — data completa de demo (PRIMERA TAREA, desbloquea a Belu y Flor)
-- `lib/db.ts` — funciones con interfaz final pero implementación mock primero
-- Conectar a Firestore real cuando esté listo (swap de implementación)
-- Lógica de stats: actualizar km, CO2, rating promedio
-- Social hints: comparar intereses entre usuarios
-
-### Belu (UI / páginas / formularios)
-- Página de registro/login: email + password + perfil
-- Página de ofrecer viaje: formulario completo
-- Página de buscar viaje: búsqueda + resultados con RideCards
-- Página de detalle del viaje: info + mapa + botón solicitar
-- Página de post-viaje: rating + buena onda + conectar
-- Slides de la presentación del domingo
-
-### Flor (diseño / visual / UX)
-- Tailwind config: colores, fonts, tema
-- Componentes UI base: Button, Input, Tag, Avatar, Card
-- Bottom nav + top bar + layout general mobile
-- Perfil social: stats, badges, conexiones
-- Pantalla de bienvenida / landing con branding OpenSeat
-- Pulido visual final en todas las pantallas
-- Car form (datos del auto)
-
-### Regla anti-bloqueo
-Nadie espera a nadie. Mock data desde el minuto 1. Si alguien necesita algo que otro no terminó, usa datos hardcodeados y sigue. Al final se conecta todo.
-
----
-
-## 13. Plan del hackathon (sábado)
-
-| Hora | Sprint | Qué se hace |
-|------|--------|-------------|
-| 8:00-9:00 | Sprint 0 | Setup: clonar repo, npm install, verificar que todos ven localhost:3000. Tomi crea mock-data.ts |
-| 9:00-12:00 | Sprint 1 | Auth (login/registro simple) + perfil + componentes UI base + layout |
-| 12:00-13:00 | Almuerzo | Merge todo a main, verificar deploy en Vercel |
-| 13:00-17:00 | Sprint 2 | Viajes: publicar, buscar, mapa Google Maps, solicitar. Conectar Firestore real |
-| 17:00-18:00 | Sprint 3 | Home + navegación + flujo completo end-to-end |
-| 18:00-19:00 | Cena | Merge final, testeo en celular real |
-| 19:00-22:00 | Sprint 4 | Post-viaje (rating + buena onda), perfil social, seed data final, demo prep, slides |
-| 22:00-23:00 | Ensayo | Practicar la presentación 3 veces con timer |
-
-**Regla de las 18:00:** A las 18:00 se para de agregar features nuevas. De ahí en adelante solo se pulé lo que hay, se prepara la demo, y se practica.
-
----
-
-## 14. Estructura de la demo (domingo)
-
-### Flujo que se muestra desde el celular:
-```
-1. Abrir openseat en Vercel desde el celular
-2. Pantalla de bienvenida con logo OpenSeat
-3. Loguearse con usuario seedeado (email @utdt.edu + password)
-4. Ver perfil completo: nombre, foto, carrera, barrio, intereses
-5. Home: ver viajes disponibles cerca
-6. Ofrecer viaje: completar formulario con mapa
-7. Cambiar a otro usuario (ya seedeado) que busca viaje
-8. Buscar viaje: ver resultados con cards y hints sociales
-9. Ver detalle del viaje con mapa y ruta
-10. Solicitar viaje
-11. Simular viaje completado → mostrar pantalla de rating + buena onda
-12. Mostrar badge "Rompehielo" desbloqueado
-13. Mostrar perfil con stats y conexiones
+// Events
+getEvents(): Promise<CommunityEvent[]>
+getEventById(id: string): Promise<CommunityEvent | null>
+getRidesForEvent(eventId: string): Promise<Ride[]>  // queries rides where eventId matches
 ```
 
-### Estructura del pitch (adaptable a 5-15 min):
-```
-1. GANCHO (30s): "¿Cuántos vinieron solos en auto hoy? ¿Y cuántos viven
-   cerca de alguien de acá y no lo saben?"
-2. PROBLEMA (1min): Miembros de una misma comunidad viajan solos sin saberlo.
-   Las apps abiertas generan desconfianza. El commute es tiempo muerto.
-3. SOLUCIÓN (1min): OpenSeat — carpooling para comunidades cerradas con
-   verificación institucional y foco social.
-4. DEMO EN VIVO (3-5min): [flujo de arriba desde el celular]
-5. DIFERENCIAL (1min): Verificación configurable + pickup inteligente +
-   buena onda score + badges + conexiones
-6. MERCADO (1min): Mercado global de carpooling $7.2B (2025), creciendo 14%
-   anual. Foco inicial: universidades argentinas.
-7. MODELO (30s): B2B SaaS — la organización paga, el usuario usa gratis.
-   Gratuito para el piloto. Futuro: integración Mercado Pago para compartir nafta.
-8. EQUIPO (30s): Nico, Tomi, Belu, Flor + backgrounds relevantes
-```
-
-### Plan B:
-- **Si WiFi falla:** Slides con screenshots de cada pantalla
-- **Si la app crashea:** Video grabado de backup (grabar sábado a la noche)
-- **Si algo no se llegó a buildear:** Data hardcodeada que se vea real
+This unblocks the entire team from hour 1.
 
 ---
 
-## 15. Decisiones técnicas importantes
+---
 
-### Pickup simplificado (2 opciones, no 3)
-Por feedback de Belu: en vez de 3 opciones para el conductor (punto fijo / paso a buscar / intermedio), simplificamos a 2:
-- **Punto fijo:** "Salgo de acá, el pasajero viene a mi punto de partida"
-- **Punto flexible:** "Me puedo desviar hasta X cuadras" (el conductor define el radio)
+## 12. Demo structure (Sunday)
 
-El pasajero elige: "que me busquen" / "voy yo" / "flexible". El matching cruza las preferencias.
+### Flow shown from the phone:
+```
+1. Open OpenSeat on Vercel from phone
+2. Welcome screen with OpenSeat logo
+3. Log in with seeded user (email @unc.edu + password)
+4. See complete profile: name, photo, major, address, interests, vibe, clubs
+5. Home: see available rides nearby + upcoming events
+6. Offer ride: complete form with map
+7. Switch to another user (pre-seeded) who is looking for a ride
+8. Search ride: see results with cards and social hints
+9. See ride detail with map and route
+10. Request ride
+11. Simulate completed ride → show rating + good vibes screen
+12. Show "Icebreaker" badge unlocked (visual animation)
+13. Show profile with stats (CO2 saved highlighted), BadgeGrid, and connections
+```
 
-### Sin pagos por ahora
-El hackathon es 100% gratuito. No hay integración de pagos. Si el proyecto continúa, se agrega Mercado Pago para compartir gastos de nafta.
-
-### Usuario dual (conductor + pasajero)
-No hay roles fijos. El mismo usuario puede ofrecer viajes (si tiene auto) y buscar viajes. Los datos del auto se cargan una vez y quedan en el perfil. El home muestra ambas opciones siempre.
-
-### Data denormalizada en rides
-Los datos del conductor (nombre, foto, departamento, rating, auto) se copian al documento del ride para evitar queries extra al mostrar resultados de búsqueda. Si el conductor actualiza su perfil, los rides viejos mantienen la data de cuando se crearon (aceptable para el MVP).
-
-### Mock-first development
-Las funciones de `lib/db.ts` se diseñan con la interfaz final pero devuelven mock data inicialmente. Esto permite que todo el equipo trabaje en paralelo sin dependencias. Cuando Firestore está listo, se cambia la implementación interna sin tocar las páginas.
+### User switch mechanism for demo
+A simple dropdown or button in dev/demo mode that lets you switch between pre-seeded users without logging out. Only visible when `NEXT_PUBLIC_DEMO_MODE=true`.
 
 ---
 
-## 16. Reglas de código
+## 13. Code rules
 
 ### TypeScript strict mode
-Todo tiene tipos. No usar `any`. Interfaces para todos los modelos de datos.
+Everything has types. Never use `any`. Interfaces for all data models.
 
-### Estructura de archivos
-- Un componente por archivo
-- Componentes en PascalCase: `RideCard.tsx`
-- Utilidades en camelCase: `formatDate.ts`
-- Carpetas en kebab-case: `ride-search/`
-- Toda la lógica de datos va en `lib/db.ts`
-- Toda la lógica de auth va en `lib/auth.ts`
-- Toda la lógica de mapas va en `lib/maps.ts`
-- Mock data en `lib/mock-data.ts`
-- Tipos en `types/` (user.ts, ride.ts)
+### File structure
+- One component per file
+- Components in PascalCase: `RideCard.tsx`
+- Utilities in camelCase: `formatDate.ts`
+- Folders in kebab-case: `ride-search/`
+- All data logic in `src/lib/db.ts`
+- All auth logic in `src/lib/auth.ts`
+- All map logic in `src/lib/maps.ts`
+- Mock data in `src/lib/mock-data.ts`
+- Firebase config in `src/lib/firebase.ts`
+- Types in `src/types/` (user.ts, ride.ts, event.ts, index.ts)
+- Components in `src/components/`
 
 ### Git workflow
-- Branch por feature: `feature/auth`, `feature/ride-form`, etc.
-- Commits con prefijo: `feat:`, `fix:`, `style:`, `refactor:`
-- Pull Request obligatorio para mergear a main
-- Mínimo 1 aprobación antes de merge
-- En hackathon: reviews rápidos, no bloquear al equipo
+- Branch per feature: `feature/auth`, `feature/ride-form`, etc.
+- Commits with prefix: `feat:`, `fix:`, `style:`, `refactor:`, `docs:`
+- Pull Request required to merge to main
+- Minimum 1 approval before merge
+- During hackathon: fast reviews, don't block the team
 
 ---
 
-## 17. Seed data para la demo
+## 14. Seed data for the demo
 
-### Usuarios de ejemplo:
+### Example users:
 ```
-1. Nico — MBA, Núñez, intereses: fintech, fútbol, emprendimiento
-   Auto: Toyota Corolla, Gris, AB 123 CD
-   Badges: Rompehielo, Eco-hero, Puntual
+1. Nico — Business Administration, Chapel Hill, interests: fintech, basketball, entrepreneurship
+   Vibe: Chatty | Clubs: Entrepreneurship Club, Intramural Sports
+   Car: Toyota Corolla, Gray, ABC-1234
+   Badges: Icebreaker, Eco-hero, Punctual
 
-2. Tomi — Negocios Digitales, Belgrano, intereses: tecnología, running, cine
-   Auto: Chevrolet Onix, Blanco, EF 456 GH
-   Badges: Rompehielo
+2. Tomi — Computer Science, Carrboro, interests: tech, running, movies
+   Vibe: Podcast listener | Clubs: Tar Heel Esports, Carolina Club Running
+   Car: Chevrolet Malibu, White, EFG-5678
+   Badges: Icebreaker
 
-3. Belu — Economía, Vicente López, intereses: yoga, viajes, lectura
-   Badges: Rompehielo, Explorador/a
+3. Belu — Economics, Durham, interests: yoga, travel, reading
+   Vibe: Chill | Clubs: Carolina Outdoors, Volunteer Corps
+   Badges: Icebreaker, Explorer
 
-4. Flor — Diseño, Palermo, intereses: arte, música, fotografía
+4. Flor — Communications, Hillsborough, interests: art, music, photography
+   Vibe: Music lover | Clubs: Photography Club, Music Makers
 
-5. Usuario demo — Derecho, Recoleta, intereses: fútbol, política
+5. Demo user — Political Science, Chapel Hill, interests: basketball, politics
+   Vibe: Chatty | Clubs: Debate Society, UNC Club Soccer
 
-6. Usuario demo 2 — MBA, San Isidro, intereses: fintech, startups
-   Auto: VW Golf, Negro, IJ 789 KL
-   Badges: Rompehielo, Eco-hero
+6. Demo user 2 — Business Administration, Durham, interests: fintech, startups
+   Vibe: Study mode | Clubs: Entrepreneurship Club, Women in CS
+   Car: VW Golf, Black, HIJ-9012
+   Badges: Icebreaker, Eco-hero
 ```
 
-### Viajes de ejemplo:
+### Example rides:
 ```
-1. Nico: Núñez → UTDT, Lun 8:30, 3 asientos, flexible (10 cuadras), música + charla
-2. Tomi: Belgrano → UTDT, Lun 9:00, 2 asientos, punto fijo, charla
-3. Usuario demo 2: San Isidro → UTDT, Lun 8:00, 3 asientos, flexible (15 cuadras), tranqui
+1. Nico: Franklin St → UNC Campus, Mon 8:00-8:30, 3 seats, flexible (2 mi), chatty
+2. Tomi: Carrboro → UNC Campus, Mon 9:00-9:15, 2 seats, fixed point, podcast listener
+3. Demo user 2: Durham → UNC Campus, Mon 7:45-8:15, 3 seats, flexible (5 mi), study mode
 ```
 
----
+### Example events:
+```
+1. UNC vs Duke Basketball — Apr 10, 7:00 PM, Dean E. Smith Center — 15 interested
+2. CS Alumni Networking Night — Apr 12, 6:00 PM, Sitterson Hall — 8 interested
+3. Spring Concert — Campus Green — Apr 15, 4:00 PM, Polk Place — 22 interested
+```
 
-## 18. Roadmap post-hackathon
-
-Mejoras a implementar sobre la base del hackathon (en orden de prioridad):
-
-### Semana 1-2: Completar lo simplificado
-1. Verificación real de email con código (Firebase Auth email verification)
-2. Colección `organizations` con dominios configurables (multi-tenant)
-3. Lógica automática de badges post-viaje
-4. Colección `ratings` separada con dimensiones (puntualidad, conducción)
-5. Agregar Directions API para cálculo de rutas y punto de encuentro automático
-
-### Semana 3-4: Features nuevas
-6. Chat in-app con Firebase Realtime DB
-7. Push notifications reales (FCM + service worker)
-8. Viajes recurrentes (L-V misma hora)
-9. Matching por afinidad social (no solo geográfico)
-
-### Mes 2+: Escalar
-10. Integración Mercado Pago para compartir nafta
-11. Panel admin web para la universidad
-12. SAML/OAuth institucional (login directo con credenciales de la uni)
-13. Feed de la comunidad
-14. Compartir ubicación en tiempo real durante el viaje
-15. Certificado de antecedentes penales + seguro del vehículo
-16. Feature de Eventos (partidos, recitales, etc.)
-17. Expansión a otras universidades (UNC, UBA, San Andrés)
