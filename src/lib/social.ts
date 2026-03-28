@@ -1,12 +1,5 @@
 import { User } from "@/types";
 
-export interface DriverInfo {
-  id: string;
-  major: string;
-  interests: string[];
-  clubs: string[];
-}
-
 /**
  * Compares a driver's profile with the current user and returns a natural-language
  * social hint string, or null if there are no matches.
@@ -18,7 +11,7 @@ export interface DriverInfo {
  *   "You both study Business Administration, like fintech, and are in Entrepreneurship Club"
  */
 export function computeSocialHint(
-  driver: DriverInfo,
+  driver: Pick<User, "id" | "major" | "interests" | "clubs">,
   currentUser: User
 ): string | null {
   if (driver.id === currentUser.id) return null;

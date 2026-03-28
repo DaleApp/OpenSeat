@@ -64,14 +64,14 @@ export default function RideCard({ ride, socialHint, onClick }: RideCardProps) {
         <Tag label={vibeLabel} />
         <Tag
           label={ride.pickupFlexibility === "flexible" ? "Flexible" : "Fixed"}
-          variant={ride.pickupFlexibility === "flexible" ? "info" : "danger"}
+          variant={ride.pickupFlexibility === "flexible" ? "info" : "warning"}
         />
       </div>
 
       {/* Social hint */}
       {socialHint && (
         <p className="mt-2 text-xs text-brand font-medium bg-brand-light px-2 py-1 rounded-lg">
-          ✦ {socialHint}
+          • {socialHint}
         </p>
       )}
     </Card>

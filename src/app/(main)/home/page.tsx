@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
-import { getRides, getEvents, getUserRides, getUserById } from "@/lib/db";
+import { getRides, getEvents, getUserRides, getUsersByIds } from "@/lib/db";
 import { computeSocialHint } from "@/lib/social";
 import { Ride, CommunityEvent, User } from "@/types";
 import RideCard from "@/components/ride/RideCard";
@@ -50,16 +50,10 @@ export default function HomePage() {
           .filter((r) => r.driverId !== currentUser.id)
           .slice(0, 5);
 
-        // Fetch full driver User objects for social hints
+        // Fetch driver User objects for social hints in a single batch query
         const uniqueDriverIds = Array.from(new Set(nearby.map((r) => r.driverId)));
-        const driverUsers = await Promise.all(
-          uniqueDriverIds.map((id) => getUserById(id))
-        );
-        const map = new Map<string, User>();
-        uniqueDriverIds.forEach((id, i) => {
-          const u = driverUsers[i];
-          if (u) map.set(id, u);
-        });
+        const driverUsers = await getUsersByIds(uniqueDriverIds);
+        const map = new Map(driverUsers.map((u) => [u.id, u]));
 
         setMyRides(myRidesData.slice(0, 3));
         setNearbyRides(nearby);

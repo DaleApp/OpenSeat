@@ -14,7 +14,7 @@ export function formatTime(timeStr: string): string {
  * e.g. "8:00 AM – 8:30 AM"
  */
 export function formatTimeRange(start: string, end: string): string {
-  const extractTime = (iso: string) => iso.split("T")[1];
+  const extractTime = (iso: string) => iso.split("T")[1] ?? "00:00";
   return `${formatTime(extractTime(start))} – ${formatTime(extractTime(end))}`;
 }
 
