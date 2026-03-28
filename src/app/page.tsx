@@ -1,9 +1,8 @@
 import Link from "next/link";
 
-export default function LandingPage() {
+export default function WelcomePage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
-      {/* Logo */}
       <div className="mb-8">
         <div className="w-20 h-20 bg-brand rounded-full flex items-center justify-center mx-auto mb-4">
           <span className="text-4xl text-white font-bold">O</span>
@@ -14,23 +13,17 @@ export default function LandingPage() {
         </p>
       </div>
 
-      {/* Description */}
       <p className="text-text-secondary max-w-sm mb-10">
         Exclusive carpooling for your community. Share rides with verified
         people and meet someone new.
       </p>
 
-      {/* Buttons */}
       <div className="flex flex-col gap-3 w-full max-w-xs">
         <Link href="/login" className="btn-primary text-center">
-          Sign in
-        </Link>
-        <Link href="/register" className="btn-secondary text-center">
-          Create account
+          Get Started
         </Link>
       </div>
 
-      {/* Footer */}
       <p className="text-text-tertiary text-xs mt-12">
         Verified by your university
       </p>
