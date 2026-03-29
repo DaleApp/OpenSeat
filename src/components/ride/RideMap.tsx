@@ -71,9 +71,12 @@ export default function RideMap({
       .then(([{ Map }, { AdvancedMarkerElement }]) => {
         if (!mapRef.current) return;
 
+        const midLat = (origin.lat + destination.lat) / 2;
+        const midLng = (origin.lng + destination.lng) / 2;
+
         const map = new Map(mapRef.current, {
-          center: { lat: origin.lat, lng: origin.lng },
-          zoom: 12,
+          center: { lat: midLat, lng: midLng },
+          zoom: 10,
           disableDefaultUI: true,
           zoomControl: true,
           mapId: "openseat-ride-map",
@@ -81,16 +84,12 @@ export default function RideMap({
 
         const directionsService = new google.maps.DirectionsService();
 
-        // If passenger location exists, route passes through them as a waypoint
-        const waypoints = passengerLocation
-          ? [{ location: { lat: passengerLocation.lat, lng: passengerLocation.lng }, stopover: true }]
-          : [];
-
+        // Always draw the driver's original route (no waypoints)
+        // Meeting point is calculated as closest point on this route to passenger
         directionsService.route(
           {
             origin: { lat: origin.lat, lng: origin.lng },
             destination: { lat: destination.lat, lng: destination.lng },
-            waypoints,
             travelMode: google.maps.TravelMode.DRIVING,
           },
           (result, status) => {
@@ -115,18 +114,68 @@ export default function RideMap({
               content: createPin("#22C55E", "Pickup"),
             });
 
-            // Passenger marker (if present)
+            // Passenger + meeting point logic
             if (passengerLocation) {
+              const passengerPos = { lat: passengerLocation.lat, lng: passengerLocation.lng };
+
+              // Find closest point on route to passenger
+              const routePath = route.overview_path;
+              let closestPoint = routePath[0];
+              let closestDist = Infinity;
+              for (let i = 0; i < routePath.length - 1; i++) {
+                const a = routePath[i];
+                const b = routePath[i + 1];
+                const atob = { lat: b.lat() - a.lat(), lng: b.lng() - a.lng() };
+                const atop = { lat: passengerLocation.lat - a.lat(), lng: passengerLocation.lng - a.lng() };
+                const lenSq = atob.lat * atob.lat + atob.lng * atob.lng;
+                let t = lenSq > 0 ? (atop.lat * atob.lat + atop.lng * atob.lng) / lenSq : 0;
+                t = Math.max(0, Math.min(1, t));
+                const projected = new google.maps.LatLng(a.lat() + t * atob.lat, a.lng() + t * atob.lng);
+                const dist = google.maps.geometry.spherical.computeDistanceBetween(
+                  new google.maps.LatLng(passengerLocation.lat, passengerLocation.lng),
+                  projected
+                );
+                if (dist < closestDist) {
+                  closestDist = dist;
+                  closestPoint = projected;
+                }
+              }
+
+              const meetPos = { lat: closestPoint.lat(), lng: closestPoint.lng() };
+
+              // Dotted line from passenger to meeting point
+              new google.maps.Polyline({
+                map,
+                path: [passengerPos, meetPos],
+                strokeColor: "#6366F1",
+                strokeWeight: 3,
+                strokeOpacity: 0,
+                icons: [{
+                  icon: { path: "M 0,-1 0,1", strokeOpacity: 0.6, strokeWeight: 3, scale: 3 },
+                  offset: "0",
+                  repeat: "12px",
+                }],
+              });
+
+              // Passenger marker
               new AdvancedMarkerElement({
                 map,
-                position: { lat: passengerLocation.lat, lng: passengerLocation.lng },
+                position: passengerPos,
                 title: "You",
                 content: createPin("#6366F1", "You"),
               });
+
+              // Meeting point marker
+              new AdvancedMarkerElement({
+                map,
+                position: meetPos,
+                title: "Meet here",
+                content: createPin("#0D9488", "Meet here"),
+              });
             }
 
-            // Meeting point (if explicitly set)
-            if (meetingPoint) {
+            // Explicit meeting point (if set without passenger)
+            if (meetingPoint && !passengerLocation) {
               new AdvancedMarkerElement({
                 map,
                 position: { lat: meetingPoint.lat, lng: meetingPoint.lng },
@@ -143,9 +192,19 @@ export default function RideMap({
               content: createPin("#EF4444", "Drop-off"),
             });
 
-            // Fit bounds
+            // Fit bounds with max zoom limit
             const bounds = route.bounds;
-            if (bounds) map.fitBounds(bounds, 50);
+            if (bounds) {
+              if (passengerLocation) {
+                bounds.extend({ lat: passengerLocation.lat, lng: passengerLocation.lng });
+              }
+              map.fitBounds(bounds, 50);
+              const listener = google.maps.event.addListener(map, "idle", () => {
+                const zoom = map.getZoom();
+                if (zoom !== undefined && zoom > 14) map.setZoom(14);
+                google.maps.event.removeListener(listener);
+              });
+            }
           }
         );
       })
