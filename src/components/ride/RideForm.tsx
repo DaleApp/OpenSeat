@@ -50,16 +50,18 @@ export default function RideForm({ defaultDestination, defaultEventName, default
     const loader = getGoogleMapsLoader();
     if (!loader.apiKey) return;
 
-    const geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ address: defaultDestination }, (results, status) => {
-      if (status === "OK" && results && results[0]?.geometry?.location) {
-        const loc = results[0].geometry.location;
-        setDestGeo({
-          address: defaultDestination,
-          lat: loc.lat(),
-          lng: loc.lng(),
-        });
-      }
+    loader.importLibrary("geocoding").then(() => {
+      const geocoder = new google.maps.Geocoder();
+      geocoder.geocode({ address: defaultDestination }, (results, status) => {
+        if (status === "OK" && results && results[0]?.geometry?.location) {
+          const loc = results[0].geometry.location;
+          setDestGeo({
+            address: defaultDestination,
+            lat: loc.lat(),
+            lng: loc.lng(),
+          });
+        }
+      });
     });
   }, [defaultDestination, destGeo]);
 
