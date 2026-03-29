@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ArrowLeftIcon } from "./icons";
 
@@ -26,9 +27,12 @@ export default function TopBar({ title, showBack = false, rightAction }: TopBarP
           )}
         </div>
         {title && (
-          <h1 className="text-base font-semibold text-text-primary truncate">
-            {title}
-          </h1>
+          <div className="flex items-center gap-1.5">
+            <Image src="/logo.png" alt="OpenSeat" width={24} height={24} />
+            <h1 className="text-base font-semibold text-text-primary truncate">
+              {title}
+            </h1>
+          </div>
         )}
         <div className="w-10 flex justify-end">{rightAction}</div>
       </div>
