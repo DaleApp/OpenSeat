@@ -1,11 +1,13 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useEffect } from "react";
 import BottomNav from "@/components/ui/BottomNav";
 import TopBar from "@/components/ui/TopBar";
 import { useAuth } from "@/lib/auth-context";
 import DemoUserSwitch from "@/components/auth/DemoUserSwitch";
+
+const MAIN_TABS = ["/home", "/ride/search", "/events", "/profile"];
 
 function AuthGate({ children }: { children: React.ReactNode }) {
   const { user, loading, isDemoMode } = useAuth();
@@ -33,10 +35,13 @@ export default function MainLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+  const isMainTab = MAIN_TABS.includes(pathname);
+
   return (
     <AuthGate>
       <div className="min-h-screen pb-nav-height">
-        <TopBar title="OpenSeat" />
+        <TopBar title="OpenSeat" showBack={!isMainTab} />
         <main>{children}</main>
         <BottomNav />
         <DemoUserSwitch />
