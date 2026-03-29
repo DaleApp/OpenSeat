@@ -23,16 +23,22 @@ export default function RideDetailPage() {
   const [requested, setRequested] = useState(false);
   const [pickupAddress, setPickupAddress] = useState("");
   const [pickupLocation, setPickupLocation] = useState<GeoPoint | undefined>(undefined);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     async function load() {
-      const rideData = await getRideById(params.id);
-      setRide(rideData);
-      if (rideData) {
-        const driverData = await getUserById(rideData.driverId);
-        setDriver(driverData);
+      try {
+        const rideData = await getRideById(params.id);
+        setRide(rideData);
+        if (rideData) {
+          const driverData = await getUserById(rideData.driverId);
+          setDriver(driverData);
+        }
+      } catch {
+        setError(true);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     }
     load();
   }, [params.id]);
@@ -53,6 +59,17 @@ export default function RideDetailPage() {
     return (
       <div className="flex justify-center items-center py-20">
         <div className="w-8 h-8 border-2 border-brand border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="px-4 py-10 text-center">
+        <p className="text-text-secondary">Could not load ride. Please try again.</p>
+        <Button size="sm" className="mt-4" onClick={() => window.location.reload()}>
+          Try again
+        </Button>
       </div>
     );
   }
