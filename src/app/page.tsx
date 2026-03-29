@@ -35,9 +35,7 @@ function NavBar() {
     <nav className="fixed top-0 w-full z-50 bg-[#0B1D1A]/80 backdrop-blur-md border-b border-white/5">
       <div className="w-full px-6 h-16 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-brand rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">O</span>
-          </div>
+          <Image src="/logo.png" alt="OpenSeat" width={32} height={32} />
           <span className="text-white font-semibold text-lg">OpenSeat</span>
         </div>
 
@@ -549,9 +547,7 @@ function Footer() {
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-brand rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">O</span>
-            </div>
+            <Image src="/logo.png" alt="OpenSeat" width={32} height={32} />
             <span className="text-white font-semibold">OpenSeat</span>
           </div>
 
