@@ -1,7 +1,7 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState, ReactNode } from "react";
-import { onAuthStateChanged, User as FirebaseUser } from "firebase/auth";
+import { createContext, useContext, useEffect, useMemo, useState, useCallback, ReactNode } from "react";
+import { onAuthStateChanged, signOut, User as FirebaseUser } from "firebase/auth";
 import { auth, hasFirebaseConfig } from "./firebase";
 import { getUserByEmail } from "./db";
 import { User } from "@/types";
@@ -13,6 +13,7 @@ interface AuthContextType {
   loading: boolean;
   isDemoMode: boolean;
   switchDemoUser: (userId: string) => void;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -21,6 +22,7 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   isDemoMode: false,
   switchDemoUser: () => {},
+  logout: async () => {},
 });
 
 export function useAuth() {
@@ -69,9 +71,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(demoUser);
   }
 
+  const logout = useCallback(async () => {
+    if (isDemoMode) {
+      setUser(null);
+      return;
+    }
+    if (auth) await signOut(auth);
+  }, [isDemoMode]);
+
   return (
     <AuthContext.Provider
-      value={{ user, firebaseUser, loading, isDemoMode, switchDemoUser }}
+      value={{ user, firebaseUser, loading, isDemoMode, switchDemoUser, logout }}
     >
       {children}
     </AuthContext.Provider>
