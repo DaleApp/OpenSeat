@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { GeoPoint } from "@/types/user";
 import { getGoogleMapsLoader } from "@/lib/maps";
 import { MapPinIcon } from "@/components/ui/icons";
@@ -15,16 +15,20 @@ interface AddressInputProps {
 export default function AddressInput({ label, placeholder, value, onChange }: AddressInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
-  const [placesAvailable, setPlacesAvailable] = useState(false);
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
 
+  // Initialize autocomplete once
   useEffect(() => {
+    if (autocompleteRef.current) return;
+
     const loader = getGoogleMapsLoader();
     if (!loader.apiKey) return;
 
     loader
       .importLibrary("places")
       .then(() => {
-        if (!inputRef.current) return;
+        if (!inputRef.current || autocompleteRef.current) return;
 
         const autocomplete = new google.maps.places.Autocomplete(inputRef.current, {
           types: ["address"],
@@ -35,7 +39,7 @@ export default function AddressInput({ label, placeholder, value, onChange }: Ad
         autocomplete.addListener("place_changed", () => {
           const place = autocomplete.getPlace();
           if (place.formatted_address && place.geometry?.location) {
-            onChange(place.formatted_address, {
+            onChangeRef.current(place.formatted_address, {
               address: place.formatted_address,
               lat: place.geometry.location.lat(),
               lng: place.geometry.location.lng(),
@@ -44,12 +48,13 @@ export default function AddressInput({ label, placeholder, value, onChange }: Ad
         });
 
         autocompleteRef.current = autocomplete;
-        setPlacesAvailable(true);
       })
-      .catch(() => {
-        // Places API not available, fallback to plain text input
-      });
-  }, [onChange]);
+      .catch(() => {});
+  }, []);
+
+  const handleInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    onChangeRef.current(e.target.value);
+  }, []);
 
   return (
     <div className="w-full">
@@ -67,9 +72,8 @@ export default function AddressInput({ label, placeholder, value, onChange }: Ad
           type="text"
           className="input pl-10"
           placeholder={placeholder ?? "Enter address"}
-          value={placesAvailable ? undefined : value}
-          defaultValue={placesAvailable ? value : undefined}
-          onChange={placesAvailable ? undefined : (e) => onChange(e.target.value)}
+          value={value}
+          onChange={handleInput}
         />
       </div>
     </div>
