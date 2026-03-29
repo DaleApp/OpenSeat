@@ -76,6 +76,10 @@ export default function RideForm({ defaultDestination, defaultEventName, default
       setError("Please select a date and time range.");
       return;
     }
+    if (timeEnd <= timeStart) {
+      setError("Departure end time must be after start time.");
+      return;
+    }
 
     setError(null);
     setShowConfirm(true);
