@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { createRide } from "@/lib/db";
 import { GeoPoint } from "@/types/user";
+import { getGoogleMapsLoader } from "@/lib/maps";
 import AddressInput from "./AddressInput";
 import RideMap from "./RideMap";
 import VibeSelector from "./VibeSelector";
@@ -42,6 +43,25 @@ export default function RideForm({ defaultDestination, defaultEventName, default
   const [showConfirm, setShowConfirm] = useState(false);
 
   const today = new Date().toISOString().split("T")[0];
+
+  // Geocode pre-filled destination from URL params
+  useEffect(() => {
+    if (!defaultDestination || destGeo) return;
+    const loader = getGoogleMapsLoader();
+    if (!loader.apiKey) return;
+
+    const geocoder = new google.maps.Geocoder();
+    geocoder.geocode({ address: defaultDestination }, (results, status) => {
+      if (status === "OK" && results && results[0]?.geometry?.location) {
+        const loc = results[0].geometry.location;
+        setDestGeo({
+          address: defaultDestination,
+          lat: loc.lat(),
+          lng: loc.lng(),
+        });
+      }
+    });
+  }, [defaultDestination, destGeo]);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
