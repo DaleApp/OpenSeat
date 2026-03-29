@@ -7,7 +7,7 @@ import TopBar from "@/components/ui/TopBar";
 import { useAuth } from "@/lib/auth-context";
 import DemoUserSwitch from "@/components/auth/DemoUserSwitch";
 
-const MAIN_TABS = ["/home", "/ride/search", "/events", "/profile"];
+const MAIN_TABS = ["/home", "/events", "/profile"];
 
 function AuthGate({ children }: { children: React.ReactNode }) {
   const { user, loading, isDemoMode } = useAuth();

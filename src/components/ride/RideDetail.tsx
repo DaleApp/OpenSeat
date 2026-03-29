@@ -42,6 +42,25 @@ export default function RideDetail({ ride, showCarDetails = false, passengerLoca
         flexibleRadiusMi={ride.flexibleRadiusMi}
       />
 
+      {/* Route addresses */}
+      <div className="flex items-start gap-2">
+        <div className="flex flex-col items-center pt-1">
+          <div className="w-2.5 h-2.5 rounded-full bg-green-400 border border-white/20" />
+          <div className="w-0.5 h-8 bg-gradient-to-b from-green-400 to-red-400 my-0.5" />
+          <div className="w-2.5 h-2.5 rounded-full bg-red-400 border border-white/20" />
+        </div>
+        <div className="flex-1 min-w-0 flex flex-col gap-2">
+          <div>
+            <p className="text-[10px] text-text-tertiary uppercase tracking-wider">From</p>
+            <p className="text-sm text-text-primary truncate">{ride.origin.address}</p>
+          </div>
+          <div>
+            <p className="text-[10px] text-text-tertiary uppercase tracking-wider">To</p>
+            <p className="text-sm font-medium text-text-primary truncate">{ride.destination.address}</p>
+          </div>
+        </div>
+      </div>
+
       {/* Details grid */}
       <div className="grid grid-cols-2 gap-3">
         <div className="bg-surface-secondary rounded-card p-3">
