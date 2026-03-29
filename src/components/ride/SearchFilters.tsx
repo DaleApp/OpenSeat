@@ -2,7 +2,8 @@
 
 import { RideFilters } from "@/types";
 import Input from "@/components/ui/Input";
-import { MapPinIcon, CalendarIcon, ClockIcon } from "@/components/ui/icons";
+import AddressInput from "@/components/ride/AddressInput";
+import { CalendarIcon, ClockIcon } from "@/components/ui/icons";
 
 interface SearchFiltersProps {
   filters: RideFilters;
@@ -16,12 +17,11 @@ export default function SearchFilters({ filters, onChange }: SearchFiltersProps)
 
   return (
     <div className="flex flex-col gap-4">
-      <Input
+      <AddressInput
         label="Destination"
         placeholder="Where are you going?"
         value={filters.destination ?? ""}
-        onChange={(e) => update({ destination: e.target.value })}
-        icon={<MapPinIcon size={18} />}
+        onChange={(address) => update({ destination: address })}
       />
 
       <Input
